@@ -1,0 +1,24 @@
+{
+  "name": "whine",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "bcrypt": "^3.0.5",
+    "body-parser": "^1.18.3",
+    "cookie-parser": "^1.4.4",
+    "cors": "^2.8.5",
+    "ejs": "^2.6.1",
+    "express": "^4.16.4",
+    "jsonwebtoken": "^8.5.1",
+    "mongodb": "^3.1.13",
+    "mongoose": "^5.4.19",
+    "nodemon": "^1.18.10"
+  },
+  "scripts": {
+    "dev": "nodemon server.js",
+    "start": "node server.js",
+    "start_db": "\"C:\\Program Files\\MongoDB\\Server\\4.0\\bin\\mongod.exe\" --dbpath data",
+    "db_cli": "\"C:\\Program Files\\MongoDB\\Server\\4.0\\bin\\mongo.exe\" mongodb://localhost:27017/participants"
+  }
+}

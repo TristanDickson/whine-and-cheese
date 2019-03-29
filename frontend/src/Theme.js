@@ -3,8 +3,8 @@
 import { createMuiTheme } from '@material-ui/core/styles';
 
 const palette = {
-  primary: { main: '#a50000' },
-  secondary: { main: '#3E2723' }
+  primary: { main: '#3E2723' },
+  secondary: { main: '#a50000' }
 };
 const themeName = 'Bright Red English Walnut Emu';
 

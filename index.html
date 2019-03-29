@@ -1,0 +1,114 @@
+<!doctype html>
+<!-- ------------------------------------------------- REVIEW HOME ------------------------------------------------------- -->
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="Home">
+    <meta name="author" content="Whine and Cheese">
+	<meta name="robots" content="noindex">
+	<meta name="theme-color" content="#a50000" />
+
+	<!-- Shit you have to do in 2018 -->
+	<meta property="og:title" content="Whine and Cheese" />
+	<meta property="og:url" content="https://www.gillflix.com./" />
+	<meta property="og:description" content="Whine and Cheese">
+	<meta property="og:image" content="./resources/fav/shareimg.png">
+	<link rel="shortcut icon" href="./resources/fav/favicon.ico">
+	<link rel="icon" sizes="16x16 32x32 64x64" href="./resources/fav/favicon.ico">
+	<link rel="icon" type="image/png" sizes="196x196" href="./resources/fav/favicon-192.png">
+	<link rel="icon" type="image/png" sizes="160x160" href="./resources/fav/favicon-160.png">
+	<link rel="icon" type="image/png" sizes="96x96" href="./resources/fav/favicon-96.png">
+	<link rel="icon" type="image/png" sizes="64x64" href="./resources/fav/favicon-64.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="./resources/fav/favicon-32.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="./resources/fav/favicon-16.png">
+	<link rel="apple-touch-icon" href="./resources/fav/favicon-57.png">
+	<link rel="apple-touch-icon" sizes="114x114" href="./resources/fav/favicon-114.png">
+	<link rel="apple-touch-icon" sizes="72x72" href="./resources/fav/favicon-72.png">
+	<link rel="apple-touch-icon" sizes="144x144" href="./resources/fav/favicon-144.png">
+	<link rel="apple-touch-icon" sizes="60x60" href="./resources/fav/favicon-60.png">
+	<link rel="apple-touch-icon" sizes="120x120" href="./resources/fav/favicon-120.png">
+	<link rel="apple-touch-icon" sizes="76x76" href="./resources/fav/favicon-76.png">
+	<link rel="apple-touch-icon" sizes="152x152" href="./resources/fav/favicon-152.png">
+	<link rel="apple-touch-icon" sizes="180x180" href="./resources/fav/favicon-180.png">
+	<meta name="msapplication-TileColor" content="#a50000">
+	<meta name="msapplication-TileImage" content="./resources/fav/favicon-144.png">
+	<meta name="msapplication-config" content="./resources/fav/browserconfig.xml">
+	<script>
+					
+	</script>
+	<style>		
+
+		.card {
+			box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.5	), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+			text-align: center;
+		}
+	</style>
+	<script src="./resources/js/Chart.bundle.js"></script>
+	<script src="./resources/js/chartjs-plugin-deferred.js"></script>
+
+    <title>Whine and Cheese</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="./resources/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="./resources/css/album.css" rel="stylesheet">
+  </head>
+  <nav class="navbar navbar-expand navbar-dark bg-dark sticky-top">
+	<a class="navbar-brand" href="/whine/">
+	  <img src="./resources/img/logo.png" width="30" height="30" alt="Whine">
+	</a>
+  </nav>
+  <body style="background-color: #222;">
+	<div>
+    <header style="background-color: transparent">
+	  <div class="container">
+		<center><img src="./resources/img/whine.png" class="img-fluid" alt="Responsive image"></center>
+	  </div>	
+    </header>
+	<center><h2 class="text-white">American Edition</h2></center>
+    <main role="main">		
+		<div>
+			<div class="container">
+			<!-- Rate Button -->
+			
+			<!-- Results load if complete -->
+			<div class="card bg-dark">
+				<div class="card-body">
+					<div id="theButton"></div>
+					<div id="theGif"></div>
+					<div id="text"></div>
+				</div>
+			  </div>	
+			</div>
+		</div>   
+    </main>
+
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="./resources/js/bootstrap.min.js"></script>
+    <script  src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+	<script>
+		$( document ).ready(function() {
+						$.ajax({
+				url: "https://sheets.googleapis.com/v4/spreadsheets/1e89oUmDxoLP-FeAWB7n5u2nzlqkWMXumtMQ31okNYmY/values/Completeness?key=AIzaSyCOgxxT26QGMJxL6AlsLGpdXG-XApem5yM",
+				success: (result) => {					
+
+					if (result.values[7][2]==result.values[7][1]){
+						$("#theButton").html('<div class="d-flex justify-content-between align-items-center"><a class="button btn btn-lg btn-block btn-success" href="/whine/results">View the full results</a></div>');		
+						}
+					if (result.values[7][2]!=result.values[7][1]){
+						$("#text").html('<center><br><p class="card-text" style="color:#fff">Whining in progress...</p></center>');		
+					}
+					if (result.values[7][2]!=result.values[7][1]){
+						$("#theGif").html('<img src="./resources/img/progress.gif" class="img-fluid" alt="Fill up">');		
+					}
+				}
+			});
+		});
+	</script>
+  </body>
+</html>
