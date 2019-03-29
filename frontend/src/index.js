@@ -10,7 +10,7 @@ import withAuth from "./withAuth";
 import Login from "./Login";
 import Rate from "./Rate";
 import CodeNotFound from "./CodeNotFound";
-import RadarChart from "./RadarChart";
+import Results from "./Results";
 
 function GoToLogin() {
   return <Redirect to="/login" />
@@ -36,7 +36,7 @@ class App extends Component {
             <Route path="/config" component={withAuth(Config)} />
             <Route path="/rate" component={Rate} />
             <Route path="/codeNotFound" component={CodeNotFound} />
-            <Route path="/radar" component={RadarChart} />
+            <Route path="/results" component={Results} />
           </Switch>
         </MuiThemeProvider>
       </Router>
