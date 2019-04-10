@@ -5,6 +5,7 @@ import Banner from "./Banner";
 import RateStepper from "./RateStepper";
 import Grid from "@material-ui/core/Grid";
 import { Redirect } from "react-router-dom";
+import banner from "./banner-light.png";
 
 const styles = theme => ({
   root: {
@@ -62,7 +63,7 @@ class Rate extends Component {
         >
           <Grid item xs={false} md={1} />
           <Grid item xs={12} md={10}>
-            <Banner />
+            <Banner image={banner} />
             <RateStepper participant_id={this.state.participant_id} />
           </Grid>
           <Grid item xs={false} md={1} />

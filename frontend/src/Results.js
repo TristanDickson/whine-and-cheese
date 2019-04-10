@@ -1,11 +1,11 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
+import ResultsAppBar from "./ResultsAppBar";
+import RadarChart from "./RadarChart";
 
 const styles = theme => ({
   root: {
-    width: "100%",
-    padding: theme.spacing.unit
   }
 });
 
@@ -16,9 +16,12 @@ class Results extends Component {
   }
 
   render() {
+    const { classes } = this.props;
+
     return (
-      <div>
-        <Results />
+      <div className={classes.root}>
+        <ResultsAppBar />
+        <RadarChart />
       </div>
     );
   }

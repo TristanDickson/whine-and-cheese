@@ -1,17 +1,23 @@
 import React from "react";
 import { withStyles } from '@material-ui/core/styles';
-import banner from "./banner-light.png";
 
 const styles = theme => ({
   root: {
     width: "100%",
-    backgroundColor: theme.palette.background.paper
+    height: "100%",
+    textAlign: "center",    
+    position: "relative"
   },
-  banner: {
-    width: "80%",
-    paddingLeft:"10%",
-    marginTop: 3*theme.spacing.unit,
-    marginBottom: theme.spacing.unit
+  banner: {    
+    position: "absolute",
+      top: 0,
+      bottom: 0,
+      left: 0,
+      right: 0,
+      margin: "auto",
+      maxWidth: "100%",
+      maxHeight: "100%",
+      padding: theme.spacing.unit
   }
 });
 
@@ -20,7 +26,7 @@ function Banner(props) {
 
   return (
     <div className={classes.root}>
-      <img className={classes.banner} src={banner} alt="Banner" />
+      <img className={classes.banner} src={props.image} alt="Banner" />
     </div>
   );
 }

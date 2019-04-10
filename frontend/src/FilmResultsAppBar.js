@@ -9,10 +9,7 @@ import MenuIcon from "@material-ui/icons/Menu";
 
 const styles = {
   root: {
-    flexGrow: 1
-  },
-  grow: {
-    flexGrow: 1,
+    width: "100%"
   },
   menuButton: {
     marginLeft: -12,
@@ -38,7 +35,6 @@ class ResultsAppBar extends Component {
 
   render() {
     const { classes } = this.props;
-    //const { anchorEl } = this.state;
 
     return (
       <div className={classes.root}>
@@ -51,8 +47,8 @@ class ResultsAppBar extends Component {
             >
               <MenuIcon />
             </IconButton>
-            <Typography variant="h6" color="inherit" className={classes.grow}>
-              Whine and Cheese
+            <Typography variant="h6" color="inherit">
+              Gillflix
             </Typography>
           </Toolbar>
         </AppBar>
