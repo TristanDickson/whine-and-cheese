@@ -1,15 +1,14 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
-import ResultsAppBar from "./ResultsAppBar";
-import RadarChart from "./RadarChart";
+import AppBar from "./AppBar";
+import Body from "./Body";
 
 const styles = theme => ({
-  root: {
-  }
+  root: {}
 });
 
-class Results extends Component {
+class FilmResults extends Component {
   constructor() {
     super();
     this.state = {};
@@ -17,18 +16,17 @@ class Results extends Component {
 
   render() {
     const { classes } = this.props;
-
     return (
       <div className={classes.root}>
-        <ResultsAppBar />
-        <RadarChart />
+        <AppBar />
+        <Body />
       </div>
     );
   }
 }
 
-Results.propTypes = {
+FilmResults.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
-export default withStyles(styles)(Results);
+export default withStyles(styles)(FilmResults);

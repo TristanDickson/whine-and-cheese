@@ -1,5 +1,3 @@
-// src/ui/theme/index.js
-
 import { createMuiTheme } from '@material-ui/core/styles';
 
 const palette = {

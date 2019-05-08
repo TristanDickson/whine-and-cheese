@@ -9,14 +9,14 @@ import {
 } from "react-router-dom";
 import MenuAppBar from "./MenuAppBar";
 import registerServiceWorker from "./registerServiceWorker";
-import Tabs from "./Tabs";
 import theme from "./Theme";
 import withAuth from "./withAuth";
-import Login from "./Login";
-import Rate from "./Rate";
-import CodeNotFound from "./CodeNotFound";
-import Results from "./Results";
-import FilmResults from "./FilmResults";
+import Login from "./Whine/Login/Login";
+import Tabs from "./Whine/Config/Tabs";
+import Rate from "./Whine/Rate/Rate";
+import CodeNotFound from "./Whine/Rate/CodeNotFound";
+import WineResults from "./Whine/Results/Results";
+import FilmResults from "./Film/FilmResults";
 
 function GoToLogin() {
   return <Redirect to="/login" />;
@@ -43,7 +43,7 @@ class App extends Component {
             <Route path="/config" component={withAuth(Config)} />
             <Route path="/rate" component={Rate} />
             <Route path="/codeNotFound" component={CodeNotFound} />
-            <Route path="/results" component={Results} />
+            <Route path="/results" component={WineResults} />
             <Route path="/film-results" component={FilmResults} />
           </Switch>
         </MuiThemeProvider>

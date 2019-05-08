@@ -6,13 +6,14 @@ import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import IconButton from "@material-ui/core/IconButton";
 import MenuIcon from "@material-ui/icons/Menu";
+import Menu from "./AppBarMenu";
 
 const styles = {
   root: {
-    flexGrow: 1
+    width: "100%"
   },
-  grow: {
-    flexGrow: 1,
+  title: {
+    paddingRight: "20px"
   },
   menuButton: {
     marginLeft: -12,
@@ -20,7 +21,10 @@ const styles = {
   }
 };
 
-class ResultsAppBar extends Component {
+let wines = ["Wine 1", "Wine 2", "Wine 3"];
+let people = ["Person 1", "Person 2", "Person 3"];
+
+class WineAppBar extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -38,7 +42,6 @@ class ResultsAppBar extends Component {
 
   render() {
     const { classes } = this.props;
-    //const { anchorEl } = this.state;
 
     return (
       <div className={classes.root}>
@@ -48,12 +51,15 @@ class ResultsAppBar extends Component {
               className={classes.menuButton}
               color="inherit"
               aria-label="Menu"
+              onClick={this.handleMenu}
             >
               <MenuIcon />
             </IconButton>
-            <Typography variant="h6" color="inherit" className={classes.grow}>
-              Whine and Cheese
+            <Typography className={classes.title} variant="h6" color="inherit">
+              Whine & Cheese
             </Typography>
+            <Menu title="Wines" items={wines}/>
+            <Menu title="Participants" items={people}/>
           </Toolbar>
         </AppBar>
       </div>
@@ -61,8 +67,8 @@ class ResultsAppBar extends Component {
   }
 }
 
-ResultsAppBar.propTypes = {
+WineAppBar.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
-export default withStyles(styles)(ResultsAppBar);
+export default withStyles(styles)(WineAppBar);
