@@ -44,7 +44,7 @@ const styles = theme => ({
   }
 });
 
-class Login extends Component {
+class Register extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -62,7 +62,7 @@ class Login extends Component {
 
   onSubmit = event => {
     event.preventDefault();
-    fetch(`${process.env.REACT_APP_BACKEND_URL}/api/authenticate`, {
+    fetch(`${process.env.REACT_APP_BACKEND_URL}/api/register`, {
       method: "POST",
       credentials: "include",
       body: JSON.stringify(this.state),
@@ -72,8 +72,8 @@ class Login extends Component {
     })
       .then(res => {
         if (res.status === 200) {
-          console.log("User logged in");
-          this.props.history.push("/config");
+          console.log("User registered");
+          this.props.history.push("/login");
         } else {
           const error = new Error(res.error);
           throw error;
@@ -81,7 +81,7 @@ class Login extends Component {
       })
       .catch(err => {
         console.error(err);
-        alert("Error logging in please try again");
+        alert("Error registering please try again");
       });
   };
 
@@ -95,7 +95,7 @@ class Login extends Component {
             <LockOutlinedIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
-            Sign in
+            Register
           </Typography>
           <form className={classes.form} onSubmit={this.onSubmit}>
             <FormControl margin="normal" required fullWidth>
@@ -125,10 +125,6 @@ class Login extends Component {
                 required
               />
             </FormControl>
-            <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
-              label="Remember me"
-            />
             <Button
               type="submit"
               fullWidth
@@ -136,7 +132,7 @@ class Login extends Component {
               color="primary"
               className={classes.submit}
             >
-              Sign in
+              Register
             </Button>
           </form>
         </Paper>
@@ -145,8 +141,8 @@ class Login extends Component {
   }
 }
 
-Login.propTypes = {
+Register.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
-export default withStyles(styles)(Login);
+export default withStyles(styles)(Register);

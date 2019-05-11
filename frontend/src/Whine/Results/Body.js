@@ -8,6 +8,7 @@ import CardHeader from "@material-ui/core/CardHeader";
 import CardContent from "@material-ui/core/CardContent";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
+import RadarChart from "./RadarChart";
 
 let film = {
   title: "True Grit",
@@ -35,7 +36,6 @@ const styles = theme => {
     },
     reviewHeader: {
       margin: 2 * theme.spacing.unit,
-      height: "25vh",
       backgroundColor: theme.palette.primary
     },
     reviewHeaderGrid: {
@@ -52,25 +52,34 @@ function ComplexGrid(props) {
   return (
     <div className={classes.layout}>
       <main>
-        <Card className={classes.reviewHeader}>
+        <Paper className={classes.reviewHeader}>
           <Grid className={classes.reviewHeaderGrid} container spacing={24}>
             <Grid className={classes.imageContainer} item xs={2} />
             <Grid item xs={8}>
-              <Typography variant="h4">{film.title}</Typography>
-              <Typography variant="body1">{film.description}</Typography>
-              <Button variant="contained" className={classes.button}>
-                IMDB
-              </Button>
+              <Card className={classes.card}>
+                <Typography variant="h4">{film.title}</Typography>
+                <Typography variant="body1">{film.description}</Typography>
+                <Button variant="contained" className={classes.button}>
+                  IMDB
+                </Button>
+              </Card>
             </Grid>
             <Grid className={classes.imageContainer} item xs={2} />
           </Grid>
-        </Card>
-        <Card className={classes.reviewHeader}>
+        </Paper>
+        <Paper className={classes.reviewHeader}>
           <Grid className={classes.reviewHeaderGrid} container spacing={24}>
-            <Grid item xs={8} />
+            <Grid item xs={8}>
+              <Card className={classes.card}>
+                <CardHeader title="Would you recommend True Grit to friends and family?" />
+                <CardContent>
+                  <RadarChart />
+                </CardContent>
+              </Card>
+            </Grid>
             <Grid item xs={4} />
           </Grid>
-        </Card>
+        </Paper>
         <Paper className={classes.reviewHeader}>
           <Grid className={classes.reviewHeaderGrid} container spacing={24}>
             <Grid item xs={6}>

@@ -47,7 +47,7 @@ class RateStepper extends React.Component {
 
   getScores = async () => {
     fetch(
-      `http://localhost:5000/participant_scores?id=${this.props.participant_id}`
+      `${process.env.REACT_APP_BACKEND_URL}/participant_scores?id=${this.props.participant_id}`
     )
       .then(response => {
         return response.json();
@@ -87,7 +87,7 @@ class RateStepper extends React.Component {
   };
 
   saveScore = (id, value) => {
-    fetch("http://localhost:5000/scores", {
+    fetch(`${process.env.REACT_APP_BACKEND_URL}/scores`, {
       method: "put",
       headers: {
         "Content-Type": "application/json"

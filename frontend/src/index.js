@@ -12,6 +12,7 @@ import registerServiceWorker from "./registerServiceWorker";
 import theme from "./Theme";
 import withAuth from "./withAuth";
 import Login from "./Whine/Login/Login";
+import Register from "./Whine/Login/Register";
 import Tabs from "./Whine/Config/Tabs";
 import Rate from "./Whine/Rate/Rate";
 import CodeNotFound from "./Whine/Rate/CodeNotFound";
@@ -40,6 +41,7 @@ class App extends Component {
           <Switch>
             <Route path="/" exact component={GoToLogin} />
             <Route path="/login" component={Login} />
+            <Route path="/register" component={Register} />
             <Route path="/config" component={withAuth(Config)} />
             <Route path="/rate" component={Rate} />
             <Route path="/codeNotFound" component={CodeNotFound} />

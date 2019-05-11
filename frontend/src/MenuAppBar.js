@@ -40,7 +40,7 @@ class MenuAppBar extends Component {
   };
 
   logout = event => {
-    fetch("http://localhost:5000/api/logout", {
+    fetch(`${process.env.REACT_APP_BACKEND_URL}/api/logout`, {
       method: "POST",
       credentials: "include",
       headers: {

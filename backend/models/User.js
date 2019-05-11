@@ -1,7 +1,7 @@
 // User.js
 const mongoose = require('mongoose');
-const bcrypt = require('bcrypt');
-const saltRounds = 10;
+const bcrypt = require('bcrypt-nodejs');
+const salt = bcrypt.genSaltSync(10);
 const UserSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true }
@@ -11,7 +11,7 @@ UserSchema.pre('save', function(next) {
   if (this.isNew || this.isModified('password')) {
     // Saving reference to this because of changing scopes
     const document = this;
-    bcrypt.hash(document.password, saltRounds,
+    bcrypt.hash(document.password, salt, null, 
       function(err, hashedPassword) {
       if (err) {
         next(err);

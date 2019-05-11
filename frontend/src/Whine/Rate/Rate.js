@@ -25,7 +25,7 @@ class Rate extends Component {
 
   componentDidMount() {
     let code = this.props.location.search.slice(1);
-    fetch(`http://localhost:5000/api/checkCode?code=${code}`)
+    fetch(`${process.env.REACT_APP_BACKEND_URL}/api/checkCode?code=${code}`)
       .then(response => {
         console.log(response);
         if (!response.ok) {

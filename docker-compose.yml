@@ -1,0 +1,30 @@
+version: '3'
+services:
+  client:
+    build: 
+      context: ./frontend
+    restart: always
+    ports:
+      - "3000:3000"
+    networks:
+      - webappnetwork
+  server:
+    build: 
+      context: ./backend
+    restart: always
+    ports:
+      - "5000"
+    networks:
+      - webappnetwork
+  database:
+    image: mongo
+    restart: always
+    volumes:
+      - /database/data:/data/db
+    ports:
+      - "27017"
+    networks:
+      - webappnetwork
+networks:
+  webappnetwork:
+    driver: bridge

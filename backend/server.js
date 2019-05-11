@@ -10,6 +10,19 @@ const cookieParser = require("cookie-parser");
 const User = require("./models/User.js");
 const withAuth = require("./middleware");
 
+let database_url;
+if (process.env.npm_lifecycle_event === "dev") {
+  database_url = "localhost"
+}
+else if (process.env.npm_lifecycle_event === "start") {
+  database_url = "database"
+}
+else{
+  console.log("Invalid npm_lifecycle_event value:")
+  console.log(process.env.npm_lifecycle_event);
+  process.exit();
+}
+
 const app = express();
 const corsOptions = {
   origin: true,
@@ -26,7 +39,7 @@ const secret = "mysecretsshhh";
 let db;
 
 MongoClient.connect(
-  "mongodb://localhost:27017",
+  `mongodb://${database_url}:27017`,
   { useNewUrlParser: true },
   (err, client) => {
     if (err) return console.log(err);
@@ -37,9 +50,10 @@ MongoClient.connect(
   }
 );
 
-const mongo_uri = "mongodb://localhost:27017/react-auth";
+const mongo_uri = `mongodb://${database_url}:27017/react-auth`;
 mongoose.connect(mongo_uri, function(err) {
   if (err) {
+    console.log(err);
     throw err;
   } else {
     console.log(`Successfully connected to ${mongo_uri}`);
@@ -57,8 +71,10 @@ app.get("/api/checkToken", withAuth, function(req, res) {
 app.post("/api/register", function(req, res) {
   const { email, password } = req.body;
   const user = new User({ email, password });
+  console.log(req.body);
   user.save(function(err) {
     if (err) {
+      console.log(err);
       res.status(500).send("Error registering new user please try again.");
     } else {
       res.status(200).send("Welcome to the club!");
@@ -75,7 +91,7 @@ app.post("/api/authenticate", function(req, res) {
         error: "Internal error please try again"
       });
     } else if (!user) {
-      console.log(req);
+      console.log(req.body);
       res.status(401).json({
         error: "Incorrect email or password"
       });

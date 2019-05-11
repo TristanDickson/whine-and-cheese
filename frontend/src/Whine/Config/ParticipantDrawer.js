@@ -77,7 +77,7 @@ class ParticipantDrawer extends React.Component {
 
   getParticipants = () => {
     console.log("Getting Participants");
-    fetch("http://localhost:5000/participants")
+    fetch(`${process.env.REACT_APP_BACKEND_URL}/participants`)
       .then(response => {
         return response.json();
       })
@@ -88,7 +88,7 @@ class ParticipantDrawer extends React.Component {
   };
 
   addParticipant = () => {
-    fetch("http://localhost:5000/participants", {
+    fetch(`${process.env.REACT_APP_BACKEND_URL}/participants`, {
       method: "post",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -104,7 +104,7 @@ class ParticipantDrawer extends React.Component {
   };
 
   updateParticipant = (_id, key, value) => {
-    fetch("http://localhost:5000/participants", {
+    fetch(`${process.env.REACT_APP_BACKEND_URL}/participants`, {
       method: "put",
       headers: {
         "Content-Type": "application/json"
@@ -120,7 +120,7 @@ class ParticipantDrawer extends React.Component {
   };
 
   deleteParticipant = _id => {
-    fetch("http://localhost:5000/participants", {
+    fetch(`${process.env.REACT_APP_BACKEND_URL}/participants`, {
       method: "delete",
       headers: {
         "Content-Type": "application/json"

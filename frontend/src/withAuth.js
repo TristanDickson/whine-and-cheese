@@ -12,7 +12,7 @@ export default function withAuth(ComponentToProtect) {
     }
 
     componentDidMount() {
-      fetch("http://localhost:5000/api/checkToken", { credentials: "include" })
+      fetch(`${process.env.REACT_APP_BACKEND_URL}/api/checkToken`, { credentials: "include" })
         .then(res => {
           if (res.status === 200) {
             this.setState({ loading: false });

@@ -64,8 +64,8 @@ class ItemDrawer extends React.Component {
   };
 
   getItems = () => {
-    console.log(`Fetching resource http://localhost:5000/${this.props.config.resourceName}`)
-    fetch(`http://localhost:5000/${this.props.config.resourceName}`)
+    console.log(`Fetching resource ${process.env.REACT_APP_BACKEND_URL}/${this.props.config.resourceName}`)
+    fetch(`${process.env.REACT_APP_BACKEND_URL}/${this.props.config.resourceName}`)
       .then(response => {
         return response.json();
       })
@@ -79,7 +79,7 @@ class ItemDrawer extends React.Component {
     this.props.config.fields.forEach(field => {
       fields[field.fieldName] = "";
     });
-    fetch(`http://localhost:5000/${this.props.config.resourceName}`, {
+    fetch(`${process.env.REACT_APP_BACKEND_URL}/${this.props.config.resourceName}`, {
       method: "post",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(fields)
@@ -91,7 +91,7 @@ class ItemDrawer extends React.Component {
   };
 
   updateItem = (_id, key, value) => {
-    fetch(`http://localhost:5000/${this.props.config.resourceName}`, {
+    fetch(`${process.env.REACT_APP_BACKEND_URL}/${this.props.config.resourceName}`, {
       method: "put",
       headers: {
         "Content-Type": "application/json"
@@ -109,7 +109,7 @@ class ItemDrawer extends React.Component {
   };
 
   deleteItem = _id => {
-    fetch(`http://localhost:5000/${this.props.config.resourceName}`, {
+    fetch(`${process.env.REACT_APP_BACKEND_URL}/${this.props.config.resourceName}`, {
       method: "delete",
       headers: {
         "Content-Type": "application/json"
