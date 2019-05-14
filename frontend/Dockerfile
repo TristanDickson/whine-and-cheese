@@ -13,6 +13,7 @@ COPY . .
 RUN yarn build
 
 FROM node:12.2.0-alpine
+RUN apk add --no-cache bash
 RUN yarn global add serve
 WORKDIR /
 COPY --from=builder /build .

@@ -20,7 +20,7 @@ import WineResults from "./Whine/Results/Results";
 import FilmResults from "./Film/FilmResults";
 
 function GoToLogin() {
-  return <Redirect to="/login" />;
+  return <Redirect to="/config" />;
 }
 
 function Config(props) {
@@ -34,6 +34,8 @@ function Config(props) {
 
 class App extends Component {
   render() {
+    console.log(process.env.REACT_APP_BACKEND_URL);
+
     return (
       <Router>
         <MuiThemeProvider theme={theme}>

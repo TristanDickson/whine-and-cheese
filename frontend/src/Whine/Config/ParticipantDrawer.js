@@ -55,15 +55,15 @@ const styles = theme => ({
 class ParticipantDrawer extends React.Component {
   constructor() {
     super();
-    this.state = { selected: null, participants: [] };
+    this.state = { selectedId: null, participants: [] };
   }
 
   componentDidMount() {
     this.getParticipants();
   }
 
-  handleListItemClick = selected => {
-    this.setState({ ...this.state, selected: selected });
+  handleListItemClick = selectedId => {
+    this.setState({ ...this.state, selectedId: selectedId });
   };
 
   handleChange = (_id, key, value) => {
@@ -82,7 +82,6 @@ class ParticipantDrawer extends React.Component {
         return response.json();
       })
       .then(participants => {
-        console.log(participants);
         this.setState({ ...this.state, participants: participants });
       });
   };
@@ -120,6 +119,7 @@ class ParticipantDrawer extends React.Component {
   };
 
   deleteParticipant = _id => {
+    console.log(`Deleting participant with id: ${_id}`)
     fetch(`${process.env.REACT_APP_BACKEND_URL}/participants`, {
       method: "delete",
       headers: {
@@ -133,8 +133,8 @@ class ParticipantDrawer extends React.Component {
         if (res.ok) return res.json();
       })
       .then(() => {
-        if (this.state.selected._id === _id) {
-          this.setState({ ...this.state, selected: null });
+        if (this.state.selectedId === _id) {
+          this.setState({ ...this.state, selectedId: null });
         }
       })
       .then(this.getParticipants);
@@ -160,7 +160,7 @@ class ParticipantDrawer extends React.Component {
     }
   };
 
-  buildParticipantList = (list_item_style, button_style) => {
+  createParticipantList = (list_item_style, button_style) => {
     const participantList = [];
     this.state.participants.forEach(participant => {
       participantList.push(
@@ -168,8 +168,8 @@ class ParticipantDrawer extends React.Component {
           <ListItem
             className={list_item_style}
             button
-            selected={this.state.selected === participant}
-            onClick={() => this.handleListItemClick(participant)}
+            selected={this.state.selectedId === participant._id}
+            onClick={() => this.handleListItemClick(participant._id)}
           >
             <ListItemIcon>
               <PersonIcon />
@@ -202,6 +202,9 @@ class ParticipantDrawer extends React.Component {
 
   render() {
     const { classes } = this.props;
+    let selectedParticipant = this.state.participants.find(participant => {
+      return participant._id === this.state.selectedId;
+    });
     return (
       <div
         className={classes.appFrame}
@@ -218,7 +221,7 @@ class ParticipantDrawer extends React.Component {
           }}
         >
           <List component="nav">
-            {this.buildParticipantList(classes.list_item, classes.button)}
+            {this.createParticipantList(classes.list_item, classes.button)}
           </List>
           <Divider />
           <List component="nav">
@@ -231,24 +234,24 @@ class ParticipantDrawer extends React.Component {
           </List>
         </Drawer>
         <div className={classes.contentPaper}>
-          {this.state.selected && (
+          {this.state.selectedId && (
             <div>
               <TextField
                 id="first-name"
                 label="First Name"
                 className={classes.textField}
                 margin="normal"
-                value={this.state.selected.firstName}
+                value={selectedParticipant.firstName}
                 onChange={event =>
                   this.handleChange(
-                    this.state.selected._id,
+                    selectedParticipant._id,
                     "firstName",
                     event.target.value
                   )
                 }
                 onBlur={event =>
                   this.updateParticipant(
-                    this.state.selected._id,
+                    selectedParticipant._id,
                     "firstName",
                     event.target.value
                   )
@@ -259,17 +262,17 @@ class ParticipantDrawer extends React.Component {
                 label="Last Name"
                 className={classes.textField}
                 margin="normal"
-                value={this.state.selected.lastName}
+                value={selectedParticipant.lastName}
                 onChange={event =>
                   this.handleChange(
-                    this.state.selected._id,
+                    selectedParticipant._id,
                     "lastName",
                     event.target.value
                   )
                 }
                 onBlur={event =>
                   this.updateParticipant(
-                    this.state.selected._id,
+                    selectedParticipant._id,
                     "lastName",
                     event.target.value
                   )
@@ -280,17 +283,17 @@ class ParticipantDrawer extends React.Component {
                 label="Age"
                 className={classes.textField}
                 margin="normal"
-                value={this.state.selected.age}
+                value={selectedParticipant.age}
                 onChange={event =>
                   this.handleChange(
-                    this.state.selected._id,
+                    selectedParticipant._id,
                     "age",
                     event.target.value
                   )
                 }
                 onBlur={event =>
                   this.updateParticipant(
-                    this.state.selected._id,
+                    selectedParticipant._id,
                     "age",
                     event.target.value
                   )
@@ -302,7 +305,7 @@ class ParticipantDrawer extends React.Component {
                 label="Code"
                 className={classes.textField}
                 margin="normal"
-                value={this.state.selected.code}
+                value={selectedParticipant.code}
               />
               <Tooltip title="Copy Link">
                 <Fab
@@ -310,12 +313,12 @@ class ParticipantDrawer extends React.Component {
                   color="primary"
                   aria-label="Link"
                   className={classes.button}
-                  onClick={() => this.copyLink(this.state.selected.code)}
+                  onClick={() => this.copyLink(selectedParticipant.code)}
                 >
                   <LinkIcon />
                 </Fab>
               </Tooltip>
-              {<ScoresTable participant_id={this.state.selected._id} />}
+              {<ScoresTable participant_id={selectedParticipant._id} />}
             </div>
           )}
         </div>

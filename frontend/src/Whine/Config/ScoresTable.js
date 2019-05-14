@@ -64,7 +64,7 @@ class ScoresTable extends React.Component {
           });
           data.push(row);
         });
-        console.log(data);
+        //console.log(data);
         this.setState({ ...this.state, scores: [...data] });
       });
   };
