@@ -7,15 +7,7 @@ import Card from "@material-ui/core/Card";
 import CardHeader from "@material-ui/core/CardHeader";
 import CardContent from "@material-ui/core/CardContent";
 import Typography from "@material-ui/core/Typography";
-import Button from "@material-ui/core/Button";
 import RadarChart from "./RadarChart";
-
-let film = {
-  title: "True Grit",
-  imdbTag: "tt1403865",
-  description:
-    "A stubborn teenager enlists the help of a tough U.S. Marshal to track down her father's murderer."
-};
 
 const styles = theme => {
   return {
@@ -46,69 +38,99 @@ const styles = theme => {
   };
 };
 
-function ComplexGrid(props) {
-  const { classes } = props;
+class ResultsBody extends React.Component {
+  constructor() {
+    super();
+    this.state = {};
+  }
 
-  return (
-    <div className={classes.layout}>
-      <main>
-        <Paper className={classes.reviewHeader}>
-          <Grid className={classes.reviewHeaderGrid} container spacing={24}>
-            <Grid className={classes.imageContainer} item xs={2} />
-            <Grid item xs={8}>
-              <Card className={classes.card}>
-                <Typography variant="h4">{film.title}</Typography>
-                <Typography variant="body1">{film.description}</Typography>
-                <Button variant="contained" className={classes.button}>
-                  IMDB
-                </Button>
-              </Card>
+  async componentDidMount() {
+    let [metrics, scores] = await Promise.all([
+      this.getMetrics(),
+      this.getScores()
+    ]);
+    this.state = {metrics: metrics, scores: scores};
+    
+    console.log(this.state);
+  }
+
+  getMetrics = async () => {
+    console.log(`Getting metrics`);
+    let response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/metrics`);
+    let metrics = await response.json();
+    return metrics;
+  };
+
+  getScores = async () => {
+    console.log(`Getting scores`);
+    let response = await fetch(
+      `${process.env.REACT_APP_BACKEND_URL}/average_scores`
+    );
+    let scores = await response.json();
+    return scores;
+  };
+
+  render() {
+    const { classes } = this.props;
+    console.log(this.state.metrics);
+    console.log(this.state.scores);
+
+    return (
+      <div className={classes.layout}>
+        <main>
+          <Paper className={classes.reviewHeader}>
+            <Grid className={classes.reviewHeaderGrid} container spacing={24}>
+              <Grid item xs={8}>
+                <Card className={classes.card}>
+                  <CardHeader title="Average Wine Scores" />
+                  <CardContent>
+                    {this.state.metric && this.state.scores && (
+                      <RadarChart
+                        metric={this.state.metrics}
+                        scores={this.state.scores}
+                      />
+                    )}
+                  </CardContent>
+                </Card>
+              </Grid>
+              <Grid item xs={4}>
+                <Card className={classes.card}>
+                  <CardHeader title="Wine Ranking" />
+                  <CardContent />
+                </Card>
+              </Grid>
             </Grid>
-            <Grid className={classes.imageContainer} item xs={2} />
-          </Grid>
-        </Paper>
-        <Paper className={classes.reviewHeader}>
-          <Grid className={classes.reviewHeaderGrid} container spacing={24}>
-            <Grid item xs={8}>
-              <Card className={classes.card}>
-                <CardHeader title="Would you recommend True Grit to friends and family?" />
-                <CardContent>
-                  <RadarChart />
-                </CardContent>
-              </Card>
+          </Paper>
+          <Paper className={classes.reviewHeader}>
+            <Grid className={classes.reviewHeaderGrid} container spacing={24}>
+              <Grid item xs={6}>
+                <Card className={classes.card}>
+                  <CardHeader title="Would you recommend True Grit to friends and family?" />
+                  <CardContent />
+                </Card>
+              </Grid>
+              <Grid item xs={6}>
+                <Card className={classes.card}>
+                  <CardHeader title="Reviewer's Quote" />
+                  <CardContent>
+                    <Typography component="p">
+                      "A good adventure film. The characters and setting were
+                      done well which made the story absorbing. Not my usual
+                      genre but I enjoyed it."
+                    </Typography>
+                  </CardContent>
+                </Card>
+              </Grid>
             </Grid>
-            <Grid item xs={4} />
-          </Grid>
-        </Paper>
-        <Paper className={classes.reviewHeader}>
-          <Grid className={classes.reviewHeaderGrid} container spacing={24}>
-            <Grid item xs={6}>
-              <Card className={classes.card}>
-                <CardHeader title="Would you recommend True Grit to friends and family?" />
-                <CardContent />
-              </Card>
-            </Grid>
-            <Grid item xs={6}>
-              <Card className={classes.card}>
-                <CardHeader title="Reviewer's Quote" />
-                <CardContent>
-                  <Typography component="p">
-                    "A good adventure film. The characters and setting were done
-                    well which made the story absorbing. Not my usual genre but
-                    I enjoyed it."
-                  </Typography>
-                </CardContent>
-              </Card>
-            </Grid>
-          </Grid>
-        </Paper>
-      </main>
-    </div>
-  );
+          </Paper>
+        </main>
+      </div>
+    );
+  }
 }
 
-ComplexGrid.propTypes = {
+ResultsBody.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
-export default withStyles(styles)(ComplexGrid);
+export default withStyles(styles)(ResultsBody);

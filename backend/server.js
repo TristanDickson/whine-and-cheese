@@ -12,13 +12,11 @@ const withAuth = require("./middleware");
 
 let database_url;
 if (process.env.npm_lifecycle_event === "dev") {
-  database_url = "localhost"
-}
-else if (process.env.npm_lifecycle_event === "start") {
-  database_url = "database"
-}
-else{
-  console.log("Invalid npm_lifecycle_event value:")
+  database_url = "localhost";
+} else if (process.env.npm_lifecycle_event === "start") {
+  database_url = "database";
+} else {
+  console.log("Invalid npm_lifecycle_event value:");
   console.log(process.env.npm_lifecycle_event);
   process.exit();
 }
@@ -147,6 +145,51 @@ app.get("/api/checkCode", function(req, res) {
     });
 });
 
+app.get("/average_scores", (req, res) => {
+  db.collection("scores")
+    .aggregate([
+      {
+        $lookup: {
+          from: "wines",
+          localField: "wine_id",
+          foreignField: "_id",
+          as: "wine"
+        }
+      },
+      {
+        $lookup: {
+          from: "metrics",
+          localField: "metric_id",
+          foreignField: "_id",
+          as: "metric"
+        }
+      },
+      { $sort: { "metric._id": 1 } },
+      { $sort: { "wine._id": 1 } },
+      {
+        $group: {
+          _id: {
+            wine: "$wine",
+            metric: "$metric"
+          },
+          avg_score: { $avg: "$score" }
+        }
+      },
+      {
+        $group: {
+          _id: {
+            wine: "$_id.wine"
+          },
+          metrics: { $push: {metric: "$_id.metric", score: "$avg_score"} }
+        }
+      }
+    ])
+    .toArray((err, result) => {
+      if (err) return console.log(err);
+      res.send(result);
+    });
+});
+
 app.get("/participant_scores", (req, res) => {
   db.collection("scores")
     .aggregate([
@@ -218,8 +261,7 @@ app.put("/scores", (req, res) => {
       }
     },
     (err, result) => {
-      //if (err) return res.send(err);
-      console.log(result);
+      if (err) return res.send(err);
       res.send(result);
     }
   );

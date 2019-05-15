@@ -1,7 +1,7 @@
 import React from "react";
 import ReactTable from "react-table";
 import { withStyles } from "@material-ui/core/styles";
-import 'react-table/react-table.css';
+import "react-table/react-table.css";
 
 const styles = theme => ({
   right: {
@@ -12,7 +12,7 @@ const styles = theme => ({
 class ScoresTable extends React.Component {
   constructor(props) {
     super();
-    this.state = {participant_id: props.participant_id}
+    this.state = { participant_id: props.participant_id };
     this.renderEditable = this.renderEditable.bind(this);
   }
 
@@ -21,7 +21,7 @@ class ScoresTable extends React.Component {
       await this.getMetrics();
       await this.getScores(this.props.participant_id);
     })();
-  }  
+  }
 
   componentDidUpdate(prevProps, prevState) {
     if (prevProps.participant_id !== this.props.participant_id) {
@@ -33,18 +33,16 @@ class ScoresTable extends React.Component {
   }
 
   getMetrics = async () => {
-    fetch(`${process.env.REACT_APP_BACKEND_URL}/metrics`)
-      .then(response => {
-        return response.json();
-      })
-      .then(metrics => {
-        this.setState({ ...this.state, metrics: [...metrics] });
-      });
+    let response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/metrics`);
+    let metrics = await response.json();
+    this.setState({ ...this.state, metrics: [...metrics] });
   };
 
   getScores = async () => {
     fetch(
-      `${process.env.REACT_APP_BACKEND_URL}/participant_scores?id=${this.props.participant_id}`
+      `${process.env.REACT_APP_BACKEND_URL}/participant_scores?id=${
+        this.props.participant_id
+      }`
     )
       .then(response => {
         return response.json();

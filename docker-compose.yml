@@ -3,7 +3,7 @@ services:
   client:
     build: 
       context: ./frontend
-    image: loosescrew/whine_client
+    image: loosescrew/whine_client:v0.1
     restart: always
     ports:
       - "3000:3000"
@@ -12,7 +12,7 @@ services:
   server:
     build: 
       context: ./backend
-    image: loosescrew/whine_server
+    image: loosescrew/whine_server:v0.1
     restart: always
     ports:
       - "5000:5000"
