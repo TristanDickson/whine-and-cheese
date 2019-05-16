@@ -58,8 +58,8 @@ class WineAppBar extends Component {
             <Typography className={classes.title} variant="h6" color="inherit">
               Whine & Cheese
             </Typography>
-            <Menu title="Wines" items={wines}/>
-            <Menu title="Participants" items={people}/>
+            {/*<Menu title="Wines" items={wines}/>
+    <Menu title="Participants" items={people}/>*/}
           </Toolbar>
         </AppBar>
       </div>

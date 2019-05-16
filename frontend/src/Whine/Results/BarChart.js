@@ -1,51 +1,27 @@
-import React, { Component } from 'react'
-import './BarChart.css'
-import { scaleLinear } from 'd3-scale'
-import { max } from 'd3-array'
-import { select } from 'd3-selection'
+import React from "react";
+import { Bar } from "react-chartjs-2";
 
-class BarChart extends Component {
-   constructor(props){
-      super(props)
-      this.createBarChart = this.createBarChart.bind(this)
-   }
-   componentDidMount() {
-      this.createBarChart()
-   }
-   componentDidUpdate() {
-      this.createBarChart()
-   }
-   createBarChart() {
-      const node = this.node
-      const dataMax = max(this.props.data)
-      const yScale = scaleLinear()
-         .domain([0, dataMax])
-         .range([0, this.props.size[1]])
-   select(node)
-      .selectAll('rect')
-      .data(this.props.data)
-      .enter()
-      .append('rect')
-   
-   select(node)
-      .selectAll('rect')
-      .data(this.props.data)
-      .exit()
-      .remove()
-   
-   select(node)
-      .selectAll('rect')
-      .data(this.props.data)
-      .style('fill', '#fe9922')
-      .attr('x', (d,i) => i * 25)
-      .attr('y', d => this.props.size[1] - yScale(d))
-      .attr('height', d => yScale(d))
-      .attr('width', 25)
-   }
-render() {
-      return <svg ref={node => this.node = node}
-      width={500} height={500}>
-      </svg>
-   }
+const data = {
+  labels: ["January", "February", "March", "April", "May", "June"],
+  datasets: [
+    {
+      label: "My First dataset",
+      backgroundColor: "rgba(255,99,132,0.2)",
+      borderColor: "rgba(255,99,132,1)",
+      borderWidth: 1,
+      hoverBackgroundColor: "rgba(255,99,132,0.4)",
+      hoverBorderColor: "rgba(255,99,132,1)",
+      data: [65, 59, 80, 81, 56, 55, 40]
+    }
+  ]
+};
+
+function BarChart(props) {
+  return (
+    <div>
+      <Bar data={data} />
+    </div>
+  );
 }
-export default BarChart
+
+export default BarChart;

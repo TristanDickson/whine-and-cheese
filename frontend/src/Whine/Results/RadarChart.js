@@ -38,42 +38,38 @@ const borderColors = [
   "rgba(255, 159, 64, 1)"
 ];
 
-const data = {
-  labels: [
-    "Eating",
-    "Drinking",
-    "Sleeping",
-    "Designing",
-    "Coding",
-    "Cycling",
-    "Running"
-  ],
-  datasets: [
-    {
-      label: "My First dataset",
-      backgroundColor: "rgba(179,181,198,0.2)",
-      borderColor: "rgba(179,181,198,1)",
-      pointBackgroundColor: "rgba(179,181,198,1)",
-      pointBorderColor: "#fff",
-      pointHoverBackgroundColor: "#fff",
-      pointHoverBorderColor: "rgba(179,181,198,1)",
-      data: [65, 59, 90, 81, 56, 55, 40]
-    },
-    {
-      label: "My Second dataset",
-      backgroundColor: "rgba(255,99,132,0.2)",
-      borderColor: "rgba(255,99,132,1)",
-      pointBackgroundColor: "rgba(255,99,132,1)",
-      pointBorderColor: "#fff",
-      pointHoverBackgroundColor: "#fff",
-      pointHoverBorderColor: "rgba(255,99,132,1)",
-      data: [28, 48, 40, 19, 96, 27, 100]
-    }
-  ]
-};
-
 function RadarChart(props) {
+  console.log(`Initialising Radar Chart`)
   let labels = props.metrics.map(metric => metric.name);
+
+  let fontSize = 12;
+  if (window.innerWidth < 500) {
+    fontSize = 8;
+  } else if (window.innerWidth < 1000) {
+    fontSize = 10;
+  }
+
+  let options = {
+    scale: {
+      ticks: {
+        suggestedMin: 0,
+        //suggestedMax: 10,
+        showLabelBackdrop: false
+      }
+    },
+    elements: {
+      line: {
+        tension: 0,
+        borderWidth: 2
+      }
+    },
+    legend: {
+      position: "right",
+      labels: {
+        fontSize: fontSize
+      }
+    }
+  }
 
   let chartData = [];
 
@@ -84,11 +80,17 @@ function RadarChart(props) {
       data: wineData,
       backgroundColor: backgroundColors[props.wines.indexOf(wine)],
       borderColor: borderColors[props.wines.indexOf(wine)],
-      borderWidth: 1
+      borderWidth: 1,
+      pointBackgroundColor: borderColors[props.wines.indexOf(wine)],
+      pointBorderColor: "#fff",
+      pointHoverBackgroundColor: "#fff",
+      pointHoverBorderColor: borderColors[props.wines.indexOf(wine)]
     });
   });
 
-  return <Radar data={data} />;
+  let data = { labels: labels, datasets: chartData};
+
+  return <Radar data={data} options={options} />;
 }
 
 export default RadarChart;

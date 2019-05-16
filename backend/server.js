@@ -29,7 +29,7 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 app.use(cookieParser());
-//app.use(express.static(path.join(__dirname, "/build")));
+app.use(express.static(path.join(__dirname, "/build")));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
@@ -145,7 +145,34 @@ app.get("/api/checkCode", function(req, res) {
     });
 });
 
-app.get("/average_scores", (req, res) => {
+app.get("/average_scores_by_wine", (req, res) => {
+  db.collection("scores")
+    .aggregate([
+      {
+        $lookup: {
+          from: "wines",
+          localField: "wine_id",
+          foreignField: "_id",
+          as: "wine"
+        }
+      },
+      {
+        $group: {
+          _id: {
+            wine: { $arrayElemAt: ["$wine", 0] }
+          },
+          avg_score: { $avg: "$score" }
+        }
+      },
+      { $sort: { avg_score: -1 } }
+    ])
+    .toArray((err, result) => {
+      if (err) return console.log(err);
+      res.send(result);
+    });
+});
+
+app.get("/average_scores_by_metric", (req, res) => {
   db.collection("scores")
     .aggregate([
       {
@@ -178,9 +205,9 @@ app.get("/average_scores", (req, res) => {
       {
         $group: {
           _id: {
-            wine: "$_id.wine"
+            wine: { $arrayElemAt: ["$_id.wine", 0] }
           },
-          metrics: { $push: {metric: "$_id.metric", score: "$avg_score"} }
+          metrics: { $push: { metric: "$_id.metric", score: "$avg_score" } }
         }
       }
     ])

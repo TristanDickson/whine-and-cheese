@@ -6,18 +6,19 @@ import Paper from "@material-ui/core/Grid";
 import Card from "@material-ui/core/Card";
 import CardHeader from "@material-ui/core/CardHeader";
 import CardContent from "@material-ui/core/CardContent";
-import Typography from "@material-ui/core/Typography";
+import WineList from "./WineList";
 import RadarChart from "./RadarChart";
+import BarChart from "./BarChart";
 
 const styles = theme => {
   return {
     root: {},
     layout: {
       width: "auto",
-      marginLeft: theme.spacing.unit * 3,
-      marginRight: theme.spacing.unit * 3,
-      [theme.breakpoints.up(1100 + theme.spacing.unit * 3 * 2)]: {
-        width: 1100,
+      //marginLeft: theme.spacing.unit * 3,
+      //marginRight: theme.spacing.unit * 3,
+      [theme.breakpoints.up(1200 + theme.spacing.unit * 3 * 2)]: {
+        width: 1200,
         marginLeft: "auto",
         marginRight: "auto"
       }
@@ -27,13 +28,21 @@ const styles = theme => {
       backgroundColor: "#ffc107"
     },
     reviewHeader: {
-      margin: 2 * theme.spacing.unit,
-      backgroundColor: theme.palette.primary
+      //backgroundColor: theme.palette.primary
     },
     reviewHeaderGrid: {
       margin: 0,
       width: "100%",
       height: "100%"
+    },
+    cardHeader: {
+      textAlign: "center"
+    },
+    radarChart: {
+      padding: "5px"
+    },
+    wineList: {
+      paddingTop: 0
     }
   };
 };
@@ -45,13 +54,16 @@ class ResultsBody extends React.Component {
   }
 
   async componentDidMount() {
-    let [metrics, scores] = await Promise.all([
+    let [metrics, metricScores, wineScores] = await Promise.all([
       this.getMetrics(),
-      this.getScores()
+      this.getScoresByMetric(),
+      this.getScoresByWine()
     ]);
-    this.state = {metrics: metrics, scores: scores};
-    
-    console.log(this.state);
+    this.setState({
+      metrics: metrics,
+      metricScores: metricScores,
+      wineScores: wineScores
+    });
   }
 
   getMetrics = async () => {
@@ -61,10 +73,19 @@ class ResultsBody extends React.Component {
     return metrics;
   };
 
-  getScores = async () => {
-    console.log(`Getting scores`);
+  getScoresByMetric = async () => {
+    console.log(`Getting metric scores`);
     let response = await fetch(
-      `${process.env.REACT_APP_BACKEND_URL}/average_scores`
+      `${process.env.REACT_APP_BACKEND_URL}/average_scores_by_metric`
+    );
+    let scores = await response.json();
+    return scores;
+  };
+
+  getScoresByWine = async () => {
+    console.log(`Getting wine scores`);
+    let response = await fetch(
+      `${process.env.REACT_APP_BACKEND_URL}/average_scores_by_wine`
     );
     let scores = await response.json();
     return scores;
@@ -72,58 +93,55 @@ class ResultsBody extends React.Component {
 
   render() {
     const { classes } = this.props;
-    console.log(this.state.metrics);
-    console.log(this.state.scores);
 
     return (
       <div className={classes.layout}>
-        <main>
-          <Paper className={classes.reviewHeader}>
-            <Grid className={classes.reviewHeaderGrid} container spacing={24}>
-              <Grid item xs={8}>
-                <Card className={classes.card}>
-                  <CardHeader title="Average Wine Scores" />
-                  <CardContent>
-                    {this.state.metric && this.state.scores && (
-                      <RadarChart
-                        metric={this.state.metrics}
-                        scores={this.state.scores}
-                      />
-                    )}
-                  </CardContent>
-                </Card>
-              </Grid>
-              <Grid item xs={4}>
-                <Card className={classes.card}>
-                  <CardHeader title="Wine Ranking" />
-                  <CardContent />
-                </Card>
-              </Grid>
+        <Paper className={classes.reviewHeader}>
+          <Grid className={classes.reviewHeaderGrid} container spacing={24}>
+            <Grid item md={4} xs={12}>
+              <Card className={classes.card}>
+                <CardHeader
+                  className={classes.cardHeader}
+                  title="Wine Ranking"
+                />
+                <CardContent className={classes.wineList}>
+                  {this.state.wineScores && (
+                    <WineList wines={this.state.wineScores} />
+                  )}
+                </CardContent>
+              </Card>
             </Grid>
-          </Paper>
-          <Paper className={classes.reviewHeader}>
-            <Grid className={classes.reviewHeaderGrid} container spacing={24}>
-              <Grid item xs={6}>
-                <Card className={classes.card}>
-                  <CardHeader title="Would you recommend True Grit to friends and family?" />
-                  <CardContent />
-                </Card>
-              </Grid>
-              <Grid item xs={6}>
-                <Card className={classes.card}>
-                  <CardHeader title="Reviewer's Quote" />
-                  <CardContent>
-                    <Typography component="p">
-                      "A good adventure film. The characters and setting were
-                      done well which made the story absorbing. Not my usual
-                      genre but I enjoyed it."
-                    </Typography>
-                  </CardContent>
-                </Card>
-              </Grid>
+            <Grid item md={8} xs={12}>
+              <Card className={classes.card}>
+                <CardHeader
+                  className={classes.cardHeader}
+                  title="Average Wine Scores"
+                />
+                <CardContent className={classes.radarChart}>
+                  {this.state.metrics && this.state.metricScores && (
+                    <RadarChart
+                      metrics={this.state.metrics}
+                      wines={this.state.metricScores}
+                    />
+                  )}
+                </CardContent>
+              </Card>
             </Grid>
-          </Paper>
-        </main>
+            <Grid item md={4} xs={12}>
+              <Card className={classes.card}>
+                <CardHeader
+                  className={classes.cardHeader}
+                  title="Wine 1"
+                />
+                <CardContent className={classes.radarChart}>
+                  {this.state.metrics && this.state.metricScores && (
+                    <BarChart/>
+                  )}
+                </CardContent>
+              </Card>
+            </Grid>
+          </Grid>
+        </Paper>
       </div>
     );
   }
