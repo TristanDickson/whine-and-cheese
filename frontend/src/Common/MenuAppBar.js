@@ -19,13 +19,14 @@ const styles = {
   },
   menuButton: {
     marginLeft: -12,
-    marginRight: 20
+    marginRight: 20,
+    zIndex: 1400
   }
 };
 
 class MenuAppBar extends Component {
   constructor(props) {
-    super(props);
+    super();
     this.state = {
       anchorEl: null
     };
@@ -65,7 +66,7 @@ class MenuAppBar extends Component {
   render() {
     const { classes } = this.props;
     const { anchorEl } = this.state;
-    const open = Boolean(anchorEl);
+    const profileMenuOpen = Boolean(anchorEl);
 
     return (
       <div className={classes.root}>
@@ -75,15 +76,16 @@ class MenuAppBar extends Component {
               className={classes.menuButton}
               color="inherit"
               aria-label="Menu"
+              onClick={this.props.toggleOpen}
             >
               <MenuIcon />
             </IconButton>
             <Typography variant="h6" color="inherit" className={classes.grow}>
-              Cheese and Whine
+              Whine & Cheese
             </Typography>
             <div>
               <IconButton
-                aria-owns={open ? "menu-appbar" : undefined}
+                aria-owns={profileMenuOpen ? "menu-appbar" : undefined}
                 aria-haspopup="true"
                 onClick={this.handleMenu}
                 color="inherit"
@@ -101,11 +103,9 @@ class MenuAppBar extends Component {
                   vertical: "top",
                   horizontal: "right"
                 }}
-                open={open}
+                open={profileMenuOpen}
                 onClose={this.handleClose}
               >
-                <MenuItem onClick={this.handleClose}>Profile</MenuItem>
-                <MenuItem onClick={this.handleClose}>My account</MenuItem>
                 <MenuItem onClick={this.logout}>Logout</MenuItem>
               </Menu>
             </div>

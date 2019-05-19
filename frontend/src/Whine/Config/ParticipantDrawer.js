@@ -1,6 +1,7 @@
-import React from "react";
+import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
+import Grid from "@material-ui/core/Grid";
 import Drawer from "@material-ui/core/Drawer";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
@@ -17,25 +18,29 @@ import Fab from "@material-ui/core/Fab";
 import ScoresTable from "./ScoresTable";
 
 const styles = theme => ({
-  root: {
-    width: "100%",
-    maxWidth: 360,
-    backgroundColor: theme.palette.background.paper
-  },
   appFrame: {
     height: 500,
     zIndex: 1,
-    overflow: "hidden",
-    position: "relative",
-    display: "flex",
+    //overflow: "hidden",
+    //position: "relative",
+    //display: "flex",
     width: "100%"
   },
   drawerPaper: {
-    position: "relative",
+    //position: "relative",
+    [theme.breakpoints.up("xs")]: {
+      top: 56
+    },
+    [theme.breakpoints.up("md")]: {
+      top: 60
+    },
+    [theme.breakpoints.up("lg")]: {
+      top: 64
+    },
     width: 320
   },
   contentPaper: {
-    marginLeft: 20
+    //marginLeft: 20
   },
   list_item: {
     width: 240,
@@ -47,19 +52,24 @@ const styles = theme => ({
   textField: {
     marginLeft: theme.spacing.unit,
     marginRight: theme.spacing.unit,
-    marginTop: 5,
-    width: 200
+    marginTop: 5
   }
 });
 
-class ParticipantDrawer extends React.Component {
-  constructor() {
+class ParticipantDrawer extends Component {
+  constructor(props) {
     super();
     this.state = { selectedId: null, participants: [] };
   }
 
-  componentDidMount() {
-    this.getParticipants();
+  async componentDidMount() {
+    await this.getItems();
+    if (this.state.participants[0]) {
+      this.setState({
+        ...this.state,
+        selectedId: this.state.participants[0]._id
+      });
+    }
   }
 
   handleListItemClick = selectedId => {
@@ -75,9 +85,9 @@ class ParticipantDrawer extends React.Component {
     this.setState(newState);
   };
 
-  getParticipants = () => {
+  getItems = async () => {
     console.log("Getting Participants");
-    fetch(`${process.env.REACT_APP_BACKEND_URL}/participants`)
+    await fetch(`${process.env.REACT_APP_BACKEND_URL}/participants`)
       .then(response => {
         return response.json();
       })
@@ -86,7 +96,7 @@ class ParticipantDrawer extends React.Component {
       });
   };
 
-  addParticipant = () => {
+  addItem = () => {
     fetch(`${process.env.REACT_APP_BACKEND_URL}/participants`, {
       method: "post",
       headers: { "Content-Type": "application/json" },
@@ -99,10 +109,10 @@ class ParticipantDrawer extends React.Component {
       .then(res => {
         if (res.ok) return res.json();
       })
-      .then(this.getParticipants);
+      .then(this.getItems);
   };
 
-  updateParticipant = (_id, key, value) => {
+  updateItem = (_id, key, value) => {
     fetch(`${process.env.REACT_APP_BACKEND_URL}/participants`, {
       method: "put",
       headers: {
@@ -118,8 +128,8 @@ class ParticipantDrawer extends React.Component {
     });
   };
 
-  deleteParticipant = _id => {
-    console.log(`Deleting participant with id: ${_id}`)
+  deleteItem = _id => {
+    console.log(`Deleting participant with id: ${_id}`);
     fetch(`${process.env.REACT_APP_BACKEND_URL}/participants`, {
       method: "delete",
       headers: {
@@ -137,12 +147,12 @@ class ParticipantDrawer extends React.Component {
           this.setState({ ...this.state, selectedId: null });
         }
       })
-      .then(this.getParticipants);
+      .then(this.getItems);
   };
 
   copyLink = code => {
     const el = document.createElement("textarea");
-    el.value = `http://localhost:3000/rate?${code}`;
+    el.value = `${new URL(window.location.href).origin}/rate?${code}`;
     el.setAttribute("readonly", "");
     el.style.position = "absolute";
     el.style.left = "-9999px";
@@ -160,7 +170,7 @@ class ParticipantDrawer extends React.Component {
     }
   };
 
-  createParticipantList = (list_item_style, button_style) => {
+  createItemList = (list_item_style, button_style) => {
     const participantList = [];
     this.state.participants.forEach(participant => {
       participantList.push(
@@ -189,9 +199,9 @@ class ParticipantDrawer extends React.Component {
             color="secondary"
             aria-label="Add"
             className={button_style}
-            onClick={() => this.deleteParticipant(participant._id)}
+            onClick={() => this.deleteItem(participant._id)}
           >
-            <DeleteIcon/>
+            <DeleteIcon />
           </Fab>
         </div>
       );
@@ -200,11 +210,37 @@ class ParticipantDrawer extends React.Component {
     return participantList;
   };
 
+  createItemInputs = (field_style, selectedItem) => {
+    const itemInputs = [];
+    this.props.config.fields.forEach(field => {
+      itemInputs.push(
+        <TextField
+          id={field.elementId}
+          key={this.props.config.fields.indexOf(field)}
+          label={field.displayName}
+          className={field_style}
+          margin="normal"
+          value={selectedItem[field.fieldName]}
+          onChange={event =>
+            this.updateItem(
+              selectedItem._id,
+              field.fieldName,
+              event.target.value
+            )
+          }
+        />
+      );
+    });
+
+    return itemInputs;
+  };
+
   render() {
     const { classes } = this.props;
-    let selectedParticipant = this.state.participants.find(participant => {
-      return participant._id === this.state.selectedId;
-    });
+    let selectedParticipant = this.state.participants.find(
+      participant => participant._id === this.state.selectedId
+    );
+
     return (
       <div
         className={classes.appFrame}
@@ -215,17 +251,19 @@ class ParticipantDrawer extends React.Component {
         }}
       >
         <Drawer
-          variant="permanent"
+          variant="temporary"
+          anchor="left"
+          open={this.props.open}
           classes={{
             paper: classes.drawerPaper
           }}
         >
           <List component="nav">
-            {this.createParticipantList(classes.list_item, classes.button)}
+            {this.createItemList(classes.list_item, classes.button)}
           </List>
           <Divider />
           <List component="nav">
-            <ListItem button onClick={event => this.addParticipant()}>
+            <ListItem button onClick={event => this.addItem()}>
               <ListItemIcon>
                 <PersonAddIcon />
               </ListItemIcon>
@@ -235,7 +273,7 @@ class ParticipantDrawer extends React.Component {
         </Drawer>
         <div className={classes.contentPaper}>
           {this.state.selectedId && (
-            <div>
+            <Grid>
               <TextField
                 id="first-name"
                 label="First Name"
@@ -250,7 +288,7 @@ class ParticipantDrawer extends React.Component {
                   )
                 }
                 onBlur={event =>
-                  this.updateParticipant(
+                  this.updateItem(
                     selectedParticipant._id,
                     "firstName",
                     event.target.value
@@ -271,7 +309,7 @@ class ParticipantDrawer extends React.Component {
                   )
                 }
                 onBlur={event =>
-                  this.updateParticipant(
+                  this.updateItem(
                     selectedParticipant._id,
                     "lastName",
                     event.target.value
@@ -292,7 +330,7 @@ class ParticipantDrawer extends React.Component {
                   )
                 }
                 onBlur={event =>
-                  this.updateParticipant(
+                  this.updateItem(
                     selectedParticipant._id,
                     "age",
                     event.target.value
@@ -319,7 +357,7 @@ class ParticipantDrawer extends React.Component {
                 </Fab>
               </Tooltip>
               {<ScoresTable participant_id={selectedParticipant._id} />}
-            </div>
+            </Grid>
           )}
         </div>
       </div>

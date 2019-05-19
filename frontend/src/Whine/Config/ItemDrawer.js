@@ -11,7 +11,7 @@ import PersonIcon from "@material-ui/icons/Person";
 import PersonAddIcon from "@material-ui/icons/PersonAdd";
 import DeleteIcon from "@material-ui/icons/Delete";
 import TextField from "@material-ui/core/TextField";
-import Fab from '@material-ui/core/Fab';
+import Fab from "@material-ui/core/Fab";
 
 const styles = theme => ({
   root: {
@@ -22,17 +22,26 @@ const styles = theme => ({
   appFrame: {
     height: 500,
     zIndex: 1,
-    overflow: "hidden",
-    position: "relative",
-    display: "flex",
+    //overflow: "hidden",
+    //position: "relative",
+    //display: "flex",
     width: "100%"
   },
   drawerPaper: {
-    position: "relative",
+    //position: "relative",
+    [theme.breakpoints.up("xs")]: {
+      top: 56
+    },
+    [theme.breakpoints.up("md")]: {
+      top: 60
+    },
+    [theme.breakpoints.up("lg")]: {
+      top: 64
+    },
     width: 320
   },
   contentPaper: {
-    marginLeft: 20
+    //marginLeft: 20
   },
   list_item: {
     width: 240,
@@ -55,17 +64,29 @@ class ItemDrawer extends React.Component {
     this.state = { selectedId: null, items: [] };
   }
 
-  componentDidMount() {
-    this.getItems();
+  async componentDidMount() {
+    await this.getItems();
+    if (this.state.items[0]) {
+      this.setState({
+        ...this.state,
+        selectedId: this.state.items[0]._id
+      });
+    }
   }
 
   handleListItemClick = _id => {
     this.setState({ ...this.state, selectedId: _id });
   };
 
-  getItems = () => {
-    console.log(`Fetching resource ${process.env.REACT_APP_BACKEND_URL}/${this.props.config.resourceName}`)
-    fetch(`${process.env.REACT_APP_BACKEND_URL}/${this.props.config.resourceName}`)
+  getItems = async () => {
+    console.log(
+      `Fetching resource ${process.env.REACT_APP_BACKEND_URL}/${
+        this.props.config.resourceName
+      }`
+    );
+    await fetch(
+      `${process.env.REACT_APP_BACKEND_URL}/${this.props.config.resourceName}`
+    )
       .then(response => {
         return response.json();
       })
@@ -79,11 +100,14 @@ class ItemDrawer extends React.Component {
     this.props.config.fields.forEach(field => {
       fields[field.fieldName] = "";
     });
-    fetch(`${process.env.REACT_APP_BACKEND_URL}/${this.props.config.resourceName}`, {
-      method: "post",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(fields)
-    })
+    fetch(
+      `${process.env.REACT_APP_BACKEND_URL}/${this.props.config.resourceName}`,
+      {
+        method: "post",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(fields)
+      }
+    )
       .then(res => {
         if (res.ok) return res.json();
       })
@@ -91,17 +115,20 @@ class ItemDrawer extends React.Component {
   };
 
   updateItem = (_id, key, value) => {
-    fetch(`${process.env.REACT_APP_BACKEND_URL}/${this.props.config.resourceName}`, {
-      method: "put",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        _id: _id,
-        key: key,
-        value: value
-      })
-    })
+    fetch(
+      `${process.env.REACT_APP_BACKEND_URL}/${this.props.config.resourceName}`,
+      {
+        method: "put",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          _id: _id,
+          key: key,
+          value: value
+        })
+      }
+    )
       .then(res => {
         if (res.ok) return res.json();
       })
@@ -109,15 +136,18 @@ class ItemDrawer extends React.Component {
   };
 
   deleteItem = _id => {
-    fetch(`${process.env.REACT_APP_BACKEND_URL}/${this.props.config.resourceName}`, {
-      method: "delete",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        _id: _id
-      })
-    })
+    fetch(
+      `${process.env.REACT_APP_BACKEND_URL}/${this.props.config.resourceName}`,
+      {
+        method: "delete",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          _id: _id
+        })
+      }
+    )
       .then(res => {
         if (res.ok) return res.json();
       })
@@ -141,7 +171,9 @@ class ItemDrawer extends React.Component {
             <ListItemText
               primary={
                 item[Object.keys(item)[1]] === ""
-                  ? `${this.props.config.displayName} ${this.state.items.indexOf(item) + 1}`
+                  ? `${
+                      this.props.config.displayName
+                    } ${this.state.items.indexOf(item) + 1}`
                   : item[Object.keys(item)[1]]
               }
             />
@@ -166,21 +198,21 @@ class ItemDrawer extends React.Component {
     const itemInputs = [];
     this.props.config.fields.forEach(field => {
       itemInputs.push(
-          <TextField
-            id={field.elementId}
-            key={this.props.config.fields.indexOf(field)}
-            label={field.displayName}
-            className={field_style}
-            margin="normal"
-            value={selectedItem[field.fieldName]}
-            onChange={event =>
-              this.updateItem(
-                selectedItem._id,
-                field.fieldName,
-                event.target.value
-              )
-            }
-          />
+        <TextField
+          id={field.elementId}
+          key={this.props.config.fields.indexOf(field)}
+          label={field.displayName}
+          className={field_style}
+          margin="normal"
+          value={selectedItem[field.fieldName]}
+          onChange={event =>
+            this.updateItem(
+              selectedItem._id,
+              field.fieldName,
+              event.target.value
+            )
+          }
+        />
       );
     });
 
@@ -196,10 +228,13 @@ class ItemDrawer extends React.Component {
     return (
       <div className={classes.appFrame}>
         <Drawer
-          variant="permanent"
+          variant="temporary"
+          anchor="left"
+          open={this.props.open}
           classes={{
             paper: classes.drawerPaper
           }}
+          onClick={this.props.toggleOpen}
         >
           <List component="nav">
             {this.createItemMenu(classes.list_item, classes.button)}
@@ -215,9 +250,8 @@ class ItemDrawer extends React.Component {
           </List>
         </Drawer>
         <div className={classes.contentPaper}>
-          {selectedItem && (
-            this.createItemInputs(classes.textField, selectedItem)
-          )}
+          {selectedItem &&
+            this.createItemInputs(classes.textField, selectedItem)}
         </div>
       </div>
     );

@@ -1,10 +1,10 @@
 import React, { Component } from "react";
+import { Redirect } from "react-router-dom";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
-import Banner from "../../Banner";
-import RateStepper from "./RateStepper";
 import Grid from "@material-ui/core/Grid";
-import { Redirect } from "react-router-dom";
+import Banner from "../../Common/Banner";
+import RateStepper from "./RateStepper";
 import banner from "./banner-light.png";
 
 const styles = theme => ({
@@ -24,10 +24,10 @@ class Rate extends Component {
   }
 
   componentDidMount() {
+    console.log(this.props.location);
     let code = this.props.location.search.slice(1);
     fetch(`${process.env.REACT_APP_BACKEND_URL}/api/checkCode?code=${code}`)
       .then(response => {
-        console.log(response);
         if (!response.ok) {
           throw Error(response.statusText);
         } else {
@@ -35,7 +35,7 @@ class Rate extends Component {
         }
       })
       .then(participant => {
-        this.setState({ loading: false, participant_id: participant._id });
+        this.setState({ loading: false, participant: participant });
       })
       .catch(error => {
         console.log(error);
@@ -64,7 +64,9 @@ class Rate extends Component {
           <Grid item xs={false} md={1} />
           <Grid item xs={12} md={10}>
             <Banner image={banner} />
-            <RateStepper participant_id={this.state.participant_id} />
+            {this.state.participant ? (
+              <RateStepper participant={this.state.participant} />
+            ) : null}
           </Grid>
           <Grid item xs={false} md={1} />
         </Grid>

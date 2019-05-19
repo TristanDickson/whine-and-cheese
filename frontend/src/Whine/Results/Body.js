@@ -38,7 +38,7 @@ const styles = theme => {
     cardHeader: {
       textAlign: "center"
     },
-    radarChart: {
+    chart: {
       padding: "5px"
     },
     wineList: {
@@ -117,7 +117,7 @@ class ResultsBody extends React.Component {
                   className={classes.cardHeader}
                   title="Average Wine Scores"
                 />
-                <CardContent className={classes.radarChart}>
+                <CardContent className={classes.chart}>
                   {this.state.metrics && this.state.metricScores && (
                     <RadarChart
                       metrics={this.state.metrics}
@@ -127,19 +127,28 @@ class ResultsBody extends React.Component {
                 </CardContent>
               </Card>
             </Grid>
-            <Grid item md={4} xs={12}>
-              <Card className={classes.card}>
-                <CardHeader
-                  className={classes.cardHeader}
-                  title="Wine 1"
-                />
-                <CardContent className={classes.radarChart}>
-                  {this.state.metrics && this.state.metricScores && (
-                    <BarChart/>
-                  )}
-                </CardContent>
-              </Card>
-            </Grid>
+            {this.state.metricScores &&
+              this.state.metricScores.map(wine => (
+                <Grid item md={4} xs={12}>
+                  <Card className={classes.card}>
+                    <CardHeader
+                      className={classes.cardHeader}
+                      title={wine._id.wine.name}
+                    />
+                    <CardContent className={classes.chart}>
+                      {this.state.metrics && this.state.metricScores && (
+                        <BarChart
+                          metrics={this.state.metrics}
+                          wines={this.state.metricScores.slice(
+                            [this.state.metricScores.indexOf(wine)],
+                            this.state.metricScores.indexOf(wine) + 1
+                          )}
+                        />
+                      )}
+                    </CardContent>
+                  </Card>
+                </Grid>
+              ))}
           </Grid>
         </Paper>
       </div>

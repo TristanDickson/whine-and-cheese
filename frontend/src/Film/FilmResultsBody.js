@@ -1,8 +1,9 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
+import Button from "@material-ui/core/Button";
 import Grid from "@material-ui/core/Grid";
-import Paper from "@material-ui/core/Grid";
+import Paper from "@material-ui/core/Paper";
 import Card from "@material-ui/core/Card";
 import CardHeader from "@material-ui/core/CardHeader";
 import CardContent from "@material-ui/core/CardContent";
@@ -10,8 +11,7 @@ import Typography from "@material-ui/core/Typography";
 import banner from "./review-header.jpg";
 import poster from "./poster.jpg";
 import jeff3 from "./jeff-3.png";
-import Button from "@material-ui/core/Button";
-import Banner from "../Banner";
+import Banner from "../Common/Banner";
 import PieChart from "./FilmResultsPieChart";
 import BarChart from "./FilmResultsBarChart";
 

@@ -7,7 +7,7 @@ import {
   Switch,
   Redirect
 } from "react-router-dom";
-import MenuAppBar from "./MenuAppBar";
+import MenuAppBar from "./Common/MenuAppBar";
 import registerServiceWorker from "./registerServiceWorker";
 import theme from "./Theme";
 import withAuth from "./withAuth";
@@ -17,20 +17,21 @@ import Tabs from "./Whine/Config/Tabs";
 import Rate from "./Whine/Rate/Rate";
 import CodeNotFound from "./Whine/Rate/CodeNotFound";
 import WineResults from "./Whine/Results/Results";
+import Config from "./Whine/Config/Config";
 import FilmResults from "./Film/FilmResults";
 
 function GoToLogin() {
   return <Redirect to="/config" />;
 }
 
-function Config(props) {
+/*function Config(props) {
   return (
     <div>
       <MenuAppBar {...props} />
-      <Tabs />
+      <Tabs {...props}/>
     </div>
   );
-}
+}*/
 
 class App extends Component {
   render() {

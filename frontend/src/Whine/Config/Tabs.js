@@ -40,6 +40,11 @@ const drawerProps = {
         fieldName: "lastName",
         elementId: "last-name",
         displayName: "Last Name"
+      },
+      {
+        fieldName: "age",
+        elementId: "age",
+        displayName: "Age"
       }
     ]
   },
@@ -78,9 +83,12 @@ const drawerProps = {
 };
 
 class ScrollableTabsButtonForce extends React.Component {
-  state = {
-    value: 0
-  };
+  constructor(props) {
+    super();
+    this.state = {
+      value: 0
+    };
+  }
 
   handleChange = (event, value) => {
     this.setState({ value });
@@ -108,17 +116,17 @@ class ScrollableTabsButtonForce extends React.Component {
         </AppBar>
         {value === 0 && (
           <TabContainer>
-            <ParticipantDrawer />
+            <ParticipantDrawer toggleOpen={this.props.toggleOpen} open={this.props.open} config={drawerProps.participants}/>
           </TabContainer>
         )}
         {value === 1 && (
           <TabContainer>
-            <ItemDrawer config={drawerProps.wines} />
+            <ItemDrawer toggleOpen={this.props.toggleOpen} open={this.props.open} config={drawerProps.wines} />
           </TabContainer>
         )}
         {value === 2 && (
           <TabContainer>
-            <ItemDrawer config={drawerProps.metrics} />
+            <ItemDrawer toggleOpen={this.props.toggleOpen} open={this.props.open} config={drawerProps.metrics} />
           </TabContainer>
         )}
       </div>

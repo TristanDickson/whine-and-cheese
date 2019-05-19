@@ -9,6 +9,7 @@ import FilterOneIcon from "@material-ui/icons/Filter1";
 import FilterTwoIcon from "@material-ui/icons/Filter2";
 import FilterThreeIcon from "@material-ui/icons/Filter3";
 import FilterFourIcon from "@material-ui/icons/Filter4";
+import FilterFiveIcon from "@material-ui/icons/Filter5";
 
 const styles = theme => ({
   root: {
@@ -19,37 +20,38 @@ const styles = theme => ({
 });
 
 let getWineRankingIcon = ranking => {
-  let icons = [<FilterOneIcon />, <FilterTwoIcon />, <FilterThreeIcon />, <FilterFourIcon />];
+  let icons = [
+    <FilterOneIcon />,
+    <FilterTwoIcon />,
+    <FilterThreeIcon />,
+    <FilterFourIcon />,
+    <FilterFiveIcon />
+  ];
   return icons[ranking];
 };
 
 let buildWineList = wines => {
   let wineList = [];
-  wines.forEach(wine => {
+  for (let index = 0; index < wines.length; index++) {
+    const wine = wines[index];
     console.log(wine._id.wine);
     wineList.push(
       <ListItem key={wines.indexOf(wine)}>
-        <Avatar>
-          {getWineRankingIcon(wines.indexOf(wine))}
-        </Avatar>
+        <Avatar>{getWineRankingIcon(wines.indexOf(wine))}</Avatar>
         <ListItemText
           primary={wine._id.wine.name}
           secondary={wine._id.wine.label}
         />
       </ListItem>
     );
-  });
+  }
   return wineList;
 };
 
 function WineList(props) {
   const { classes } = props;
   console.log(props.wines);
-  return (
-    <List className={classes.root}>
-      {buildWineList(props.wines)}
-    </List>
-  );
+  return <List className={classes.root}>{buildWineList(props.wines)}</List>;
 }
 
 WineList.propTypes = {

@@ -22,14 +22,13 @@ if (process.env.npm_lifecycle_event === "dev") {
 }
 
 const app = express();
+//app.use(express.static(path.join(__dirname, "/build")));
 const corsOptions = {
   origin: true,
   credentials: true
 };
-
 app.use(cors(corsOptions));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, "/build")));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
@@ -217,6 +216,75 @@ app.get("/average_scores_by_metric", (req, res) => {
     });
 });
 
+app.get("/participant_data", (req, res) => {
+  db.collection("scores")
+    .aggregate([
+      { $match: { participant_id: ObjectId(req.query.id) } },
+      {
+        $lookup: {
+          from: "wines",
+          localField: "wine_id",
+          foreignField: "_id",
+          as: "wine"
+        }
+      },
+      {
+        $lookup: {
+          from: "metrics",
+          localField: "metric_id",
+          foreignField: "_id",
+          as: "metric"
+        }
+      },
+      {
+        $lookup: {
+          from: "comments",
+          let: { participant_id: "$participant_id", wine_id: "$wine_id" },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    { $eq: ["$participant_id", "$$participant_id"] },
+                    { $eq: ["$wine_id", "$$wine_id"] }
+                  ]
+                }
+              }
+            }
+          ],
+          as: "comment"
+        }
+      },
+      {
+        $group: {
+          _id: {
+            wine: { $arrayElemAt: ["$wine", 0] },
+            comment: { $arrayElemAt: ["$comment", 0] }
+          },
+          scores: {
+            $push: {
+              id: "$_id",
+              metric: { $arrayElemAt: ["$metric", 0] },
+              value: "$score"
+            }
+          }
+        }
+      },
+      {
+        $project: {
+          _id: 0,
+          wine: "$_id.wine",
+          comment: "$_id.comment",
+          scores: "$scores"
+        }
+      }
+    ])
+    .toArray((err, result) => {
+      if (err) return console.log(err);
+      res.send(result);
+    });
+});
+
 app.get("/participant_scores", (req, res) => {
   db.collection("scores")
     .aggregate([
@@ -246,7 +314,6 @@ app.get("/participant_scores", (req, res) => {
         }
       },
       { $sort: { "metric._id": 1 } },
-      { $sort: { "wine._id": 1 } },
       {
         $group: {
           _id: {
@@ -261,17 +328,9 @@ app.get("/participant_scores", (req, res) => {
             }
           }
         }
-      }
+      },
+      { $sort: { "_id.wine.label": 1 } }
     ])
-    .toArray((err, result) => {
-      if (err) return console.log(err);
-      res.send(result);
-    });
-});
-
-app.get("/scores", (req, res) => {
-  db.collection("scores")
-    .find()
     .toArray((err, result) => {
       if (err) return console.log(err);
       res.send(result);
@@ -285,6 +344,22 @@ app.put("/scores", (req, res) => {
     {
       $set: {
         score: req.body.value
+      }
+    },
+    (err, result) => {
+      if (err) return res.send(err);
+      res.send(result);
+    }
+  );
+});
+
+app.put("/comments", (req, res) => {
+  console.log(`Updating comment with id: ${req.body._id}`);
+  db.collection("comments").findOneAndUpdate(
+    { _id: ObjectId(req.body._id) },
+    {
+      $set: {
+        comment: req.body.value
       }
     },
     (err, result) => {
@@ -335,6 +410,11 @@ app.post("/participants", async (req, res) => {
         score: 0
       });
     });
+    db.collection("comments").insertOne({
+      participant_id: participant.insertedId,
+      wine_id: wine._id,
+      comment: ""
+    });
   });
   console.log(`Added participant with id: ${participant.insertedId}`);
   res.send(participant);
@@ -359,16 +439,17 @@ app.put("/participants", (req, res) => {
   );
 });
 
-app.delete("/participants", (req, res) => {
+app.delete("/participants", async (req, res) => {
   console.log(`Deleting participant with id: ${req.body._id}`);
   deleteItem("participants", req.body._id);
-  db.collection("scores").deleteMany(
-    { participant_id: ObjectId(req.body._id) },
-    (err, result) => {
-      if (err) return console.log(err);
-      res.send(result);
-    }
-  );
+  await db
+    .collection("scores")
+    .deleteMany({ participant_id: ObjectId(req.body._id) });
+  await db
+    .collection("comments")
+    .deleteMany({ participant_id: ObjectId(req.body._id) });
+  console.log(`Deleted participant with id: ${req.body._id}`);
+  res.send(`"Deleted participant with id: ${req.body._id}"`);
 });
 
 app.get("/wines", (req, res) => {
@@ -393,6 +474,11 @@ app.post("/wines", async (req, res) => {
         score: 0
       });
     });
+    db.collection("comments").insertOne({
+      participant_id: participant._id,
+      wine_id: wine.insertedId,
+      comment: ""
+    });
   });
   console.log(`Added wine with id: ${wine.insertedId}`);
   res.send(wine);
@@ -415,17 +501,15 @@ app.put("/wines", (req, res) => {
   );
 });
 
-app.delete("/wines", (req, res) => {
+app.delete("/wines", async (req, res) => {
   console.log(`Deleting wine with id: ${req.body._id}`);
-  deleteItem("wines", req.body._id);
-  db.collection("scores").deleteMany(
-    { wine_id: ObjectId(req.body._id) },
-    (err, result) => {
-      if (err) return console.log(err);
-      console.log(result);
-      res.send(result);
-    }
-  );
+  deleteItem("participants", req.body._id);
+  await db.collection("scores").deleteMany({ wine_id: ObjectId(req.body._id) });
+  await db
+    .collection("comments")
+    .deleteMany({ wine_id: ObjectId(req.body._id) });
+  console.log(`Deleted wine with id: ${req.body._id}`);
+  res.send(`"Deleted wine with id: ${req.body._id}"`);
 });
 
 app.get("/metrics", (req, res) => {
