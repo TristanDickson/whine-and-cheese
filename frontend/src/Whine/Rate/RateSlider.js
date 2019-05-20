@@ -20,7 +20,7 @@ const styles = theme => ({
 class RateSlider extends React.Component {
   constructor(props) {
     super();
-    this.state = { value: props.metric.value };
+    this.state = { value: props.score.value };
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -29,21 +29,21 @@ class RateSlider extends React.Component {
     }
   }
 
-  handleChange = (updateScore, metric) => (event, value) => {
-    updateScore(metric, value);
+  handleChange = (updateScore, score) => (event, value) => {
+    updateScore(score, value);
     this.setState({ value: value });
   };
 
   render() {
     const { classes } = this.props;
-    const metric = this.props.metric;
+    const score = this.props.score;
     const { value } = this.state;
 
     return (
       <Grid container spacing={8} alignItems="center" className={classes.root}>
         <Grid item xs={3} md={3}>
           <Typography align="center" variant="body2" gutterBottom>
-            {metric.name}
+            {score.metric.name}
           </Typography>
         </Grid>
         <Grid item xs={7} md={6}>
@@ -58,7 +58,7 @@ class RateSlider extends React.Component {
               min={0}
               max={10}
               step={1}
-              onChange={this.handleChange(this.props.updateScore, metric)}
+              onChange={this.handleChange(this.props.updateScore, score)}
             />
           </div>
         </Grid>

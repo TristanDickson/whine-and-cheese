@@ -9,13 +9,13 @@ import RateSlider from "./RateSlider";
 const styles = theme => ({
   root: {
     width: "100%",
-    flexGrow: 1,
+    //flexGrow: 1,
     marginTop: theme.spacing.unit,
     marginBottom: theme.spacing.unit
   },
   textField: {
-    marginLeft: theme.spacing.unit,
-    marginRight: theme.spacing.unit,
+    paddingLeft: theme.spacing.unit,
+    paddingRight: theme.spacing.unit,
     marginTop: 5
   }
 });
@@ -36,36 +36,32 @@ function Sliders(props) {
         </Typography>
       </Grid>
       {props.wine ? (
+        <Grid className={classes.root}>
           <Grid item xs={12}>
-            {props.wine.metrics.map(metric => (
+            {props.wine.scores.map(score => (
               <RateSlider
-                key={metric.name}
-                metric={metric}
+                key={score._id}
+                score={score}
                 updateScore={props.updateScore}
               />
             ))}
           </Grid>
-          /*<TextField
-            id="comment"
-            label="Comment"
-            className={classes.textField}
-            margin="normal"
-            value="comment"
-            onChange={event =>
-              this.props.changeComment(
-                selectedParticipant._id,
-                "firstName",
-                event.target.value
-              )
-            }
-            onBlur={event =>
-              this.updateComment(
-                selectedParticipant._id,
-                "firstName",
-                event.target.value
-              )
-            }
-          />*/
+          <Grid item xs={12} md={8}>
+            <TextField
+              id="comment"
+              label="Comment"
+              multiline
+              rowsMax="4"
+              fullWidth
+              className={classes.textField}
+              margin="normal"
+              value={props.wine.comment.comment}
+              onChange={event => {
+                props.updateComment(event.target.value);
+              }}
+            />
+          </Grid>
+        </Grid>
       ) : null}
     </Grid>
   );

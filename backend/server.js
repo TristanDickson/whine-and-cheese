@@ -236,6 +236,7 @@ app.get("/participant_data", (req, res) => {
           as: "metric"
         }
       },
+      { $sort: { "metric._id": 1 } },
       {
         $lookup: {
           from: "comments",
@@ -263,7 +264,7 @@ app.get("/participant_data", (req, res) => {
           },
           scores: {
             $push: {
-              id: "$_id",
+              _id: "$_id",
               metric: { $arrayElemAt: ["$metric", 0] },
               value: "$score"
             }
@@ -277,7 +278,8 @@ app.get("/participant_data", (req, res) => {
           comment: "$_id.comment",
           scores: "$scores"
         }
-      }
+      },
+      { $sort: { "wine.label": 1 } }
     ])
     .toArray((err, result) => {
       if (err) return console.log(err);

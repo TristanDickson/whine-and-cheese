@@ -48,7 +48,7 @@ class RateStepper extends React.Component {
 
   getParticipantData = async () => {
     fetch(
-      `${process.env.REACT_APP_BACKEND_URL}/participant_scores?id=${
+      `${process.env.REACT_APP_BACKEND_URL}/participant_data?id=${
         this.props.participant._id
       }`
     )
@@ -61,60 +61,59 @@ class RateStepper extends React.Component {
       });
   };
 
-  saveParticipantData = (scores, comment) => {
-    scores.forEach(score => this.saveScore(score.id, score.value));
-    this.saveComment(comment.id, comment.value);
+  saveParticipantData = wine => {
+    wine.scores.forEach(score => this.saveScore(score));
+    this.saveComment(wine.comment);
   };
 
-  saveScore = (id, value) => {
+  saveScore = score => {
     fetch(`${process.env.REACT_APP_BACKEND_URL}/scores`, {
       method: "put",
       headers: {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        _id: id,
-        value: value
+        _id: score._id,
+        value: score.value
       })
     }).then(res => {
       if (res.ok) return res.json();
     });
-  };  
+  };
 
-  saveComment = (id, value) => {
+  saveComment = comment => {
     fetch(`${process.env.REACT_APP_BACKEND_URL}/comments`, {
       method: "put",
       headers: {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        _id: id,
-        value: value
+        _id: comment._id,
+        value: comment.comment
       })
     }).then(res => {
       if (res.ok) return res.json();
     });
   };
 
-  updateScore = wine => (metric, value) => {
+  updateScore = wine => (score, value) => {
     let newState = { ...this.state };
     let newWine = newState.wines.find(_wine => _wine === wine);
-    let newMetric = newWine.metrics.find(_metric => _metric === metric);
-    newMetric.value = value;
+    let newScore = newWine.scores.find(_score => _score === score);
+    newScore.value = value;
     this.setState(newState);
   };
 
-  updateComment = wine => comment => {
+  updateComment = wine => value => {
     let newState = { ...this.state };
     let newWine = newState.wines.find(_wine => _wine === wine);
-    let newMetric = newWine.metrics.find(_metric => _metric === metric);
-    newMetric.value = value;
+    newWine.comment.comment = value;
     this.setState(newState);
   };
 
   handleNext = () => {
     if (this.state.activeStep > 0) {
-      this.saveParticipantData(this.state.wines[this.state.activeStep - 1].metrics);
+      this.saveParticipantData(this.state.wines[this.state.activeStep - 1]);
     }
     this.setState(state => ({
       activeStep: state.activeStep + 1
@@ -156,9 +155,11 @@ class RateStepper extends React.Component {
             <Stepper activeStep={activeStep - 1}>
               {wines.map(wine => {
                 return (
-                  <Step key={wine.label}>
+                  <Step key={wine.wine._id}>
                     <StepLabel>
-                      <div className={classes.stepperLabel}>{wine.label}</div>
+                      <div className={classes.stepperLabel}>
+                        {wine.wine.label}
+                      </div>
                     </StepLabel>
                   </Step>
                 );
@@ -169,7 +170,7 @@ class RateStepper extends React.Component {
               wine={wines[activeStep - 1]}
               start={activeStep === 0}
               updateScore={this.updateScore(wines[activeStep - 1])}
-              updateComment={this.updateComment(wines[activeStep -1])}
+              updateComment={this.updateComment(wines[activeStep - 1])}
             />
             <div className={classes.stepperControls}>
               {activeStep === wines.length + 1 ? (
