@@ -68,7 +68,7 @@ class ResultsBody extends React.Component {
 
   getMetrics = async () => {
     console.log(`Getting metrics`);
-    let response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/metrics`);
+    let response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/metrics`);
     let metrics = await response.json();
     return metrics;
   };
@@ -76,7 +76,7 @@ class ResultsBody extends React.Component {
   getScoresByMetric = async () => {
     console.log(`Getting metric scores`);
     let response = await fetch(
-      `${process.env.REACT_APP_BACKEND_URL}/average_scores_by_metric`
+      `${process.env.REACT_APP_BACKEND_URL}/api/average_scores_by_metric`
     );
     let scores = await response.json();
     return scores;
@@ -85,7 +85,7 @@ class ResultsBody extends React.Component {
   getScoresByWine = async () => {
     console.log(`Getting wine scores`);
     let response = await fetch(
-      `${process.env.REACT_APP_BACKEND_URL}/average_scores_by_wine`
+      `${process.env.REACT_APP_BACKEND_URL}/api/average_scores_by_wine`
     );
     let scores = await response.json();
     return scores;

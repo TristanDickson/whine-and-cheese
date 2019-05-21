@@ -22,7 +22,7 @@ if (process.env.npm_lifecycle_event === "dev") {
 }
 
 const app = express();
-//app.use(express.static(path.join(__dirname, "/build")));
+app.use(express.static(path.join(__dirname, "/build")));
 const corsOptions = {
   origin: true,
   credentials: true
@@ -55,10 +55,6 @@ mongoose.connect(mongo_uri, function(err) {
   } else {
     console.log(`Successfully connected to ${mongo_uri}`);
   }
-});
-
-app.get("/api/config", withAuth, function(req, res) {
-  res.sendFile(path.join(__dirname, "build", "index.html"));
 });
 
 app.get("/api/checkToken", withAuth, function(req, res) {
@@ -144,7 +140,7 @@ app.get("/api/checkCode", function(req, res) {
     });
 });
 
-app.get("/average_scores_by_wine", (req, res) => {
+app.get("/api/average_scores_by_wine", (req, res) => {
   db.collection("scores")
     .aggregate([
       {
@@ -171,7 +167,7 @@ app.get("/average_scores_by_wine", (req, res) => {
     });
 });
 
-app.get("/average_scores_by_metric", (req, res) => {
+app.get("/api/average_scores_by_metric", (req, res) => {
   db.collection("scores")
     .aggregate([
       {
@@ -216,7 +212,7 @@ app.get("/average_scores_by_metric", (req, res) => {
     });
 });
 
-app.get("/participant_data", (req, res) => {
+app.get("/api/participant_data", (req, res) => {
   db.collection("scores")
     .aggregate([
       { $match: { participant_id: ObjectId(req.query.id) } },
@@ -287,7 +283,7 @@ app.get("/participant_data", (req, res) => {
     });
 });
 
-app.get("/participant_scores", (req, res) => {
+app.get("/api/participant_scores", (req, res) => {
   db.collection("scores")
     .aggregate([
       { $match: { participant_id: ObjectId(req.query.id) } },
@@ -339,8 +335,10 @@ app.get("/participant_scores", (req, res) => {
     });
 });
 
-app.put("/scores", (req, res) => {
-  console.log(`Updating score with id: ${req.body._id}`);
+app.put("/api/scores", (req, res) => {
+  console.log(
+    `Updating score with id: ${req.body._id}`
+  );
   db.collection("scores").findOneAndUpdate(
     { _id: ObjectId(req.body._id) },
     {
@@ -355,7 +353,26 @@ app.put("/scores", (req, res) => {
   );
 });
 
-app.put("/comments", (req, res) => {
+app.post("/api/comments", (req, res) => {
+  console.log(
+    `Creating comment with participant_id: ${
+      req.body.participant_id
+    } and wine_id ${req.body.wine_id}`
+  );
+  db.collection("comments").insertOne(
+    {
+      participant_id: ObjectId(req.body.participant_id),
+      wine_id: ObjectId(req.body.wine_id),
+      comment: ""
+    },
+    (err, result) => {
+      if (err) return res.send(err);
+      res.send(result);
+    }
+  );
+});
+
+app.put("/api/comments", (req, res) => {
   console.log(`Updating comment with id: ${req.body._id}`);
   db.collection("comments").findOneAndUpdate(
     { _id: ObjectId(req.body._id) },
@@ -371,7 +388,7 @@ app.put("/comments", (req, res) => {
   );
 });
 
-app.get("/participants", (req, res) => {
+app.get("/api/participants", (req, res) => {
   db.collection("participants")
     .find()
     .toArray((err, result) => {
@@ -380,7 +397,7 @@ app.get("/participants", (req, res) => {
     });
 });
 
-app.post("/participants", async (req, res) => {
+app.post("/api/participants", async (req, res) => {
   let participantCode;
   let codeValid = false;
   let attempts = 0;
@@ -422,7 +439,7 @@ app.post("/participants", async (req, res) => {
   res.send(participant);
 });
 
-app.put("/participants", (req, res) => {
+app.put("/api/participants", (req, res) => {
   console.log(
     `Updating ${req.body.key} for participant with id: ${req.body._id}`
   );
@@ -441,7 +458,7 @@ app.put("/participants", (req, res) => {
   );
 });
 
-app.delete("/participants", async (req, res) => {
+app.delete("/api/participants", async (req, res) => {
   console.log(`Deleting participant with id: ${req.body._id}`);
   deleteItem("participants", req.body._id);
   await db
@@ -454,7 +471,7 @@ app.delete("/participants", async (req, res) => {
   res.send(`"Deleted participant with id: ${req.body._id}"`);
 });
 
-app.get("/wines", (req, res) => {
+app.get("/api/wines", (req, res) => {
   db.collection("wines")
     .find()
     .toArray((err, result) => {
@@ -463,7 +480,7 @@ app.get("/wines", (req, res) => {
     });
 });
 
-app.post("/wines", async (req, res) => {
+app.post("/api/wines", async (req, res) => {
   let wine = await insertItem("wines", req.body);
   let participants = await getCollection("participants");
   let metrics = await getCollection("metrics");
@@ -486,7 +503,7 @@ app.post("/wines", async (req, res) => {
   res.send(wine);
 });
 
-app.put("/wines", (req, res) => {
+app.put("/api/wines", (req, res) => {
   console.log(`Updating ${req.body.key} wine with id: ${req.body._id}`);
   db.collection("wines").findOneAndUpdate(
     { _id: ObjectId(req.body._id) },
@@ -503,18 +520,18 @@ app.put("/wines", (req, res) => {
   );
 });
 
-app.delete("/wines", async (req, res) => {
+app.delete("/api/wines", async (req, res) => {
   console.log(`Deleting wine with id: ${req.body._id}`);
-  deleteItem("participants", req.body._id);
+  deleteItem("wines", req.body._id);
   await db.collection("scores").deleteMany({ wine_id: ObjectId(req.body._id) });
   await db
     .collection("comments")
     .deleteMany({ wine_id: ObjectId(req.body._id) });
-  console.log(`Deleted wine with id: ${req.body._id}`);
+  console.log(`Deleted wine with id: ${req.body._id}\n`);
   res.send(`"Deleted wine with id: ${req.body._id}"`);
 });
 
-app.get("/metrics", (req, res) => {
+app.get("/api/metrics", (req, res) => {
   db.collection("metrics")
     .find()
     .toArray((err, result) => {
@@ -523,7 +540,7 @@ app.get("/metrics", (req, res) => {
     });
 });
 
-app.post("/metrics", async (req, res) => {
+app.post("/api/metrics", async (req, res) => {
   let metric = await insertItem("metrics", req.body);
   let participants = await getCollection("participants");
   let wines = await getCollection("wines");
@@ -541,7 +558,7 @@ app.post("/metrics", async (req, res) => {
   res.send(metric);
 });
 
-app.put("/metrics", (req, res) => {
+app.put("/api/metrics", (req, res) => {
   console.log(`Updating ${req.body.key} metric with id: ${req.body._id}`);
   db.collection("metrics").findOneAndUpdate(
     { _id: ObjectId(req.body._id) },
@@ -558,7 +575,7 @@ app.put("/metrics", (req, res) => {
   );
 });
 
-app.delete("/metrics", (req, res) => {
+app.delete("/api/metrics", (req, res) => {
   console.log(`Deleting metric with id: ${req.body._id}`);
   deleteItem("metrics", req.body._id);
   db.collection("scores").deleteMany(
@@ -569,6 +586,10 @@ app.delete("/metrics", (req, res) => {
       res.send(result);
     }
   );
+});
+
+app.get('/*', function (req, res) {
+  res.sendFile(path.join(__dirname, 'build', 'index.html'));
 });
 
 getCollection = async collection => {

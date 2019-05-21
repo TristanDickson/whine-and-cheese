@@ -28,7 +28,7 @@ const styles = theme => ({
 
 const drawerProps = {
   participants: {
-    resourceName: "participants",
+    resourceName: "api/participants",
     displayName: "Participant",
     fields: [
       {
@@ -49,7 +49,7 @@ const drawerProps = {
     ]
   },
   wines: {
-    resourceName: "wines",
+    resourceName: "api/wines",
     displayName: "Wine",
     fields: [
       {
@@ -65,7 +65,7 @@ const drawerProps = {
     ]
   },
   metrics: {
-    resourceName: "metrics",
+    resourceName: "api/metrics",
     displayName: "Metric",
     fields: [
       {
@@ -82,7 +82,7 @@ const drawerProps = {
   }
 };
 
-class ScrollableTabsButtonForce extends React.Component {
+class ConfigTabs extends React.Component {
   constructor(props) {
     super();
     this.state = {
@@ -134,8 +134,8 @@ class ScrollableTabsButtonForce extends React.Component {
   }
 }
 
-ScrollableTabsButtonForce.propTypes = {
+ConfigTabs.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
-export default withStyles(styles)(ScrollableTabsButtonForce);
+export default withStyles(styles)(ConfigTabs);

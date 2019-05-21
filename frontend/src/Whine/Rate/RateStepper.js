@@ -44,11 +44,17 @@ class RateStepper extends React.Component {
 
   async componentDidMount() {
     await this.getParticipantData();
+    await this.state.wines.forEach(wine => {
+      if (!wine.comment) {
+        this.createComment(this.props.participant._id, wine.wine._id);
+      }
+    });
+    await this.getParticipantData();
   }
 
   getParticipantData = async () => {
-    fetch(
-      `${process.env.REACT_APP_BACKEND_URL}/participant_data?id=${
+    await fetch(
+      `${process.env.REACT_APP_BACKEND_URL}/api/participant_data?id=${
         this.props.participant._id
       }`
     )
@@ -67,7 +73,7 @@ class RateStepper extends React.Component {
   };
 
   saveScore = score => {
-    fetch(`${process.env.REACT_APP_BACKEND_URL}/scores`, {
+    fetch(`${process.env.REACT_APP_BACKEND_URL}/api/scores`, {
       method: "put",
       headers: {
         "Content-Type": "application/json"
@@ -81,8 +87,22 @@ class RateStepper extends React.Component {
     });
   };
 
+  createComment = (participant_id, wine_id) => {
+    fetch(`${process.env.REACT_APP_BACKEND_URL}/api/comments`, {
+      method: "post",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        participant_id: participant_id,
+        wine_id: wine_id,
+        comment: ""
+      })
+    }).then(res => {
+      if (res.ok) return res.json();
+    });
+  };
+
   saveComment = comment => {
-    fetch(`${process.env.REACT_APP_BACKEND_URL}/comments`, {
+    fetch(`${process.env.REACT_APP_BACKEND_URL}/api/comments`, {
       method: "put",
       headers: {
         "Content-Type": "application/json"

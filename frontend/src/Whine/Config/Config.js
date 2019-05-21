@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import MenuAppBar from "../../Common/MenuAppBar";
-import Tabs from "./Tabs";
+import ConfigTabs from "./ConfigTabs";
 
 class Config extends Component {
   constructor(props) {
@@ -9,7 +9,6 @@ class Config extends Component {
   }
 
   toggleOpen = () => {
-    console.log(this.state.open);
     this.setState({open: !this.state.open});
   }
 
@@ -17,7 +16,7 @@ class Config extends Component {
     return (
       <div>
         <MenuAppBar toggleOpen={this.toggleOpen} {...this.props} />
-        <Tabs toggleOpen={this.toggleOpen} open={this.state.open} {...this.props} />
+        <ConfigTabs toggleOpen={this.toggleOpen} open={this.state.open} {...this.props} />
       </div>
     );
   }

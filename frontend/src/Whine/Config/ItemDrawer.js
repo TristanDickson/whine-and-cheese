@@ -74,7 +74,8 @@ class ItemDrawer extends React.Component {
     }
   }
 
-  handleListItemClick = _id => {
+  handleListItemClick = _id => {    
+    this.props.toggleOpen();
     this.setState({ ...this.state, selectedId: _id });
   };
 
@@ -234,7 +235,6 @@ class ItemDrawer extends React.Component {
           classes={{
             paper: classes.drawerPaper
           }}
-          onClick={this.props.toggleOpen}
         >
           <List component="nav">
             {this.createItemMenu(classes.list_item, classes.button)}

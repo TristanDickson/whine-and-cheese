@@ -33,14 +33,14 @@ class ScoresTable extends React.Component {
   }
 
   getMetrics = async () => {
-    let response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/metrics`);
+    let response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/metrics`);
     let metrics = await response.json();
     this.setState({ ...this.state, metrics: [...metrics] });
   };
 
   getScores = async () => {
     fetch(
-      `${process.env.REACT_APP_BACKEND_URL}/participant_scores?id=${
+      `${process.env.REACT_APP_BACKEND_URL}/api/participant_scores?id=${
         this.props.participant_id
       }`
     )
@@ -68,7 +68,7 @@ class ScoresTable extends React.Component {
   };
 
   saveScore = (id, value) => {
-    fetch(`${process.env.REACT_APP_BACKEND_URL}/scores`, {
+    fetch(`${process.env.REACT_APP_BACKEND_URL}/api/scores`, {
       method: "put",
       headers: {
         "Content-Type": "application/json"

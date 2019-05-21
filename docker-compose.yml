@@ -21,7 +21,7 @@ services:
   app_server:
     build: 
       context: ./backend
-    image: loosescrew/whine_app_server:v0.2
+    image: loosescrew/whine_app_server
     restart: always
     ports:
       - "5000:5000"

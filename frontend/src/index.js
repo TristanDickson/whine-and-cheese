@@ -7,13 +7,12 @@ import {
   Switch,
   Redirect
 } from "react-router-dom";
-import MenuAppBar from "./Common/MenuAppBar";
 import registerServiceWorker from "./registerServiceWorker";
+import unregister from "./registerServiceWorker";
 import theme from "./Theme";
 import withAuth from "./withAuth";
 import Login from "./Whine/Login/Login";
 import Register from "./Whine/Login/Register";
-import Tabs from "./Whine/Config/Tabs";
 import Rate from "./Whine/Rate/Rate";
 import CodeNotFound from "./Whine/Rate/CodeNotFound";
 import WineResults from "./Whine/Results/Results";
@@ -23,15 +22,6 @@ import FilmResults from "./Film/FilmResults";
 function GoToLogin() {
   return <Redirect to="/config" />;
 }
-
-/*function Config(props) {
-  return (
-    <div>
-      <MenuAppBar {...props} />
-      <Tabs {...props}/>
-    </div>
-  );
-}*/
 
 class App extends Component {
   render() {
@@ -59,4 +49,5 @@ class App extends Component {
 
 ReactDOM.render(<App />, document.getElementById("app"));
 
-registerServiceWorker();
+unregister();
+//registerServiceWorker();

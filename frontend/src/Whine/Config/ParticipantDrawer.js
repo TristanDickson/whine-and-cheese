@@ -73,6 +73,7 @@ class ParticipantDrawer extends Component {
   }
 
   handleListItemClick = selectedId => {
+    this.props.toggleOpen();
     this.setState({ ...this.state, selectedId: selectedId });
   };
 
@@ -87,7 +88,7 @@ class ParticipantDrawer extends Component {
 
   getItems = async () => {
     console.log("Getting Participants");
-    await fetch(`${process.env.REACT_APP_BACKEND_URL}/participants`)
+    await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/participants`)
       .then(response => {
         return response.json();
       })
@@ -97,7 +98,7 @@ class ParticipantDrawer extends Component {
   };
 
   addItem = () => {
-    fetch(`${process.env.REACT_APP_BACKEND_URL}/participants`, {
+    fetch(`${process.env.REACT_APP_BACKEND_URL}/api/participants`, {
       method: "post",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -113,7 +114,7 @@ class ParticipantDrawer extends Component {
   };
 
   updateItem = (_id, key, value) => {
-    fetch(`${process.env.REACT_APP_BACKEND_URL}/participants`, {
+    fetch(`${process.env.REACT_APP_BACKEND_URL}/api/participants`, {
       method: "put",
       headers: {
         "Content-Type": "application/json"
@@ -130,7 +131,7 @@ class ParticipantDrawer extends Component {
 
   deleteItem = _id => {
     console.log(`Deleting participant with id: ${_id}`);
-    fetch(`${process.env.REACT_APP_BACKEND_URL}/participants`, {
+    fetch(`${process.env.REACT_APP_BACKEND_URL}/api/participants`, {
       method: "delete",
       headers: {
         "Content-Type": "application/json"
