@@ -114,21 +114,33 @@ class ConfigTabs extends React.Component {
             <Tab label="Metrics" icon={<BarChart />} />
           </Tabs>
         </AppBar>
-        {value === 0 && (
-          <TabContainer>
-            <ParticipantDrawer toggleOpen={this.props.toggleOpen} open={this.props.open} config={drawerProps.participants}/>
-          </TabContainer>
-        )}
-        {value === 1 && (
-          <TabContainer>
-            <ItemDrawer toggleOpen={this.props.toggleOpen} open={this.props.open} config={drawerProps.wines} />
-          </TabContainer>
-        )}
-        {value === 2 && (
-          <TabContainer>
-            <ItemDrawer toggleOpen={this.props.toggleOpen} open={this.props.open} config={drawerProps.metrics} />
-          </TabContainer>
-        )}
+          {value === 0 && (
+            <TabContainer>
+              <ParticipantDrawer
+                toggleOpen={this.props.toggleOpen}
+                open={this.props.open}
+                config={drawerProps.participants}
+              />
+            </TabContainer>
+          )}
+          {value === 1 && (
+            <TabContainer className={classes.root}>
+              <ItemDrawer
+                toggleOpen={this.props.toggleOpen}
+                open={this.props.open}
+                config={drawerProps.wines}
+              />
+            </TabContainer>
+          )}
+          {value === 2 && (
+            <TabContainer>
+              <ItemDrawer
+                toggleOpen={this.props.toggleOpen}
+                open={this.props.open}
+                config={drawerProps.metrics}
+              />
+            </TabContainer>
+          )}
       </div>
     );
   }

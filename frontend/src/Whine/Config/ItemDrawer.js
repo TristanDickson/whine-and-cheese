@@ -14,18 +14,18 @@ import TextField from "@material-ui/core/TextField";
 import Fab from "@material-ui/core/Fab";
 
 const styles = theme => ({
-  root: {
-    width: "100%",
-    maxWidth: 360,
-    backgroundColor: theme.palette.background.paper
-  },
   appFrame: {
     height: 500,
     zIndex: 1,
     //overflow: "hidden",
     //position: "relative",
     //display: "flex",
-    width: "100%"
+    width: "100%",
+    [theme.breakpoints.up(1200 + theme.spacing.unit * 3 * 2)]: {
+      width: 1200,
+      marginLeft: "auto",
+      marginRight: "auto"
+    }
   },
   drawerPaper: {
     //position: "relative",
@@ -54,7 +54,9 @@ const styles = theme => ({
     marginLeft: theme.spacing.unit,
     marginRight: theme.spacing.unit,
     marginTop: 5,
-    width: 200
+    [theme.breakpoints.down('xs')]: {
+      width: 100
+    }
   }
 });
 
@@ -81,9 +83,9 @@ class ItemDrawer extends React.Component {
 
   getItems = async () => {
     console.log(
-      `Fetching resource ${process.env.REACT_APP_BACKEND_URL}/${
-        this.props.config.resourceName
-      }`
+      `Getting ${
+        this.props.config.displayName
+      }s...`
     );
     await fetch(
       `${process.env.REACT_APP_BACKEND_URL}/${this.props.config.resourceName}`
@@ -92,6 +94,7 @@ class ItemDrawer extends React.Component {
         return response.json();
       })
       .then(items => {
+        console.log(items);
         this.setState({ ...this.state, items: [...items] });
       });
   };

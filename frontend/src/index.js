@@ -8,7 +8,7 @@ import {
   Redirect
 } from "react-router-dom";
 import registerServiceWorker from "./registerServiceWorker";
-import unregister from "./registerServiceWorker";
+import { unregister } from "./registerServiceWorker";
 import theme from "./Theme";
 import withAuth from "./withAuth";
 import Login from "./Whine/Login/Login";

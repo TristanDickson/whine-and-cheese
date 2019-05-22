@@ -24,7 +24,12 @@ const styles = theme => ({
     //overflow: "hidden",
     //position: "relative",
     //display: "flex",
-    width: "100%"
+    width: "100%",
+    [theme.breakpoints.up(1200 + theme.spacing.unit * 3 * 2)]: {
+      width: 1200,
+      marginLeft: "auto",
+      marginRight: "auto"
+    }
   },
   drawerPaper: {
     //position: "relative",
@@ -52,7 +57,10 @@ const styles = theme => ({
   textField: {
     marginLeft: theme.spacing.unit,
     marginRight: theme.spacing.unit,
-    marginTop: 5
+    marginTop: 5,
+    [theme.breakpoints.down('xs')]: {
+      width: 100
+    }
   }
 });
 
@@ -87,12 +95,13 @@ class ParticipantDrawer extends Component {
   };
 
   getItems = async () => {
-    console.log("Getting Participants");
+    console.log("Getting Participants...");
     await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/participants`)
       .then(response => {
         return response.json();
       })
       .then(participants => {
+        console.log(participants);
         this.setState({ ...this.state, participants: participants });
       });
   };

@@ -19,7 +19,7 @@ class ScoresTable extends React.Component {
   componentDidMount() {
     (async () => {
       await this.getMetrics();
-      await this.getScores(this.props.participant_id);
+      await this.getParticipantData();
     })();
   }
 
@@ -27,44 +27,31 @@ class ScoresTable extends React.Component {
     if (prevProps.participant_id !== this.props.participant_id) {
       (async () => {
         await this.getMetrics();
-        await this.getScores(this.props.participant_id);
+        await this.getParticipantData();
       })();
     }
   }
 
   getMetrics = async () => {
-    let response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/metrics`);
+    console.log("Getting Metrics...");
+    let response = await fetch(
+      `${process.env.REACT_APP_BACKEND_URL}/api/metrics`
+    );
     let metrics = await response.json();
-    this.setState({ ...this.state, metrics: [...metrics] });
+    console.log(metrics);
+    this.setState({ ...this.state, columns: this.buildColumns(metrics) });
   };
 
-  getScores = async () => {
-    fetch(
-      `${process.env.REACT_APP_BACKEND_URL}/api/participant_scores?id=${
+  getParticipantData = async () => {
+    console.log("Getting Scores...");
+    let response = await fetch(
+      `${process.env.REACT_APP_BACKEND_URL}/api/participant_data?id=${
         this.props.participant_id
       }`
-    )
-      .then(response => {
-        return response.json();
-      })
-      .then(wines => {
-        let data = [];
-        wines.forEach(wine => {
-          let row = {
-            wineId: wine._id.wine._id,
-            wineName: wine._id.wine.name
-          };
-          wine.scores.forEach(score => {
-            row[score.metric.name] = {
-              id: score.id,
-              value: score.value
-            };
-          });
-          data.push(row);
-        });
-        //console.log(data);
-        this.setState({ ...this.state, scores: [...data] });
-      });
+    );
+    let wines = await response.json();
+    console.log(wines);
+    this.setState({ ...this.state, data: this.buildData(wines) });
   };
 
   saveScore = (id, value) => {
@@ -82,7 +69,7 @@ class ScoresTable extends React.Component {
     });
   };
 
-  buildColumns = () => {
+  buildColumns = metrics => {
     const { classes } = this.props;
     let columns = [
       {
@@ -90,7 +77,7 @@ class ScoresTable extends React.Component {
         accessor: "wineName"
       }
     ];
-    this.state.metrics.forEach(metric => {
+    metrics.forEach(metric => {
       columns.push({
         id: metric.name,
         Header: metric.name,
@@ -101,6 +88,24 @@ class ScoresTable extends React.Component {
     return columns;
   };
 
+  buildData = wines => {
+    let data = [];
+    wines.forEach(wine => {
+      let row = {
+        wineId: wine.wine._id,
+        wineName: wine.wine.name
+      };
+      wine.scores.forEach(score => {
+        row[score.metric.name] = {
+          id: score._id,
+          value: score.value
+        };
+      });
+      data.push(row);
+    });
+    return data;
+  };
+
   renderEditable(cellInfo) {
     return (
       <div
@@ -108,16 +113,15 @@ class ScoresTable extends React.Component {
         contentEditable
         suppressContentEditableWarning
         onBlur={e => {
-          const data = [...this.state.scores];
+          const data = [...this.state.data];
           data[cellInfo.index][cellInfo.column.id].value = e.target.innerHTML;
           this.saveScore(
             data[cellInfo.index][cellInfo.column.id].id,
             Number(data[cellInfo.index][cellInfo.column.id].value)
           );
-          //this.setState();
         }}
         dangerouslySetInnerHTML={{
-          __html: this.state.scores[cellInfo.index][cellInfo.column.id].value
+          __html: this.state.data[cellInfo.index][cellInfo.column.id].value
         }}
       />
     );
@@ -126,11 +130,11 @@ class ScoresTable extends React.Component {
   render() {
     return (
       <div>
-        {this.state.metrics && (
+        {this.state.columns && this.state.data && (
           <div>
             <ReactTable
-              data={this.state.scores}
-              columns={this.buildColumns()}
+              data={this.state.data}
+              columns={this.state.columns}
               defaultPageSize={10}
               minRows={0}
               className="-striped -highlight"
