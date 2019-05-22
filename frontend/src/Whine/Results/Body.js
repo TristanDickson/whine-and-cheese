@@ -54,45 +54,57 @@ class ResultsBody extends React.Component {
   }
 
   async componentDidMount() {
-    let [metrics, metricScores, wineScores] = await Promise.all([
+    let [metrics, wineAvgScores, wineData] = await Promise.all([
       this.getMetrics(),
-      this.getScoresByMetric(),
-      this.getScoresByWine()
+      this.getWineAvgScores(),
+      this.getWineData()
     ]);
     this.setState({
       metrics: metrics,
-      metricScores: metricScores,
-      wineScores: wineScores
+      wineAvgScores: wineAvgScores,
+      wineData: wineData
     });
   }
 
   getMetrics = async () => {
     console.log(`Getting metrics`);
-    let response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/metrics`);
+    let response = await fetch(
+      `${process.env.REACT_APP_BACKEND_URL}/api/metrics`
+    );
     let metrics = await response.json();
     return metrics;
   };
 
-  getScoresByMetric = async () => {
-    console.log(`Getting metric scores`);
+  getWineAvgScores = async () => {
+    console.log(`Getting wine average scores`);
     let response = await fetch(
-      `${process.env.REACT_APP_BACKEND_URL}/api/average_scores_by_metric`
+      `${process.env.REACT_APP_BACKEND_URL}/api/wine_average_scores`
     );
     let scores = await response.json();
     return scores;
   };
 
-  getScoresByWine = async () => {
-    console.log(`Getting wine scores`);
+  getWineData = async () => {
+    console.log(`Getting wine data`);
     let response = await fetch(
-      `${process.env.REACT_APP_BACKEND_URL}/api/average_scores_by_wine`
+      `${process.env.REACT_APP_BACKEND_URL}/api/wine_data`
     );
-    let scores = await response.json();
-    return scores;
+    let data = await response.json();
+    return data;
   };
+
+  getRandomComment = comments => {
+    let filledComments = comments.filter(comment => comment.comment != "");
+    console.log(filledComments);
+    let selectedComment = filledComments[Math.floor(Math.random() * filledComments.length)];
+    return `"${selectedComment.comment}" - ${selectedComment.participant.firstName} ${selectedComment.participant.lastName}`
+  }  
 
   render() {
     const { classes } = this.props;
+    let metrics = this.state.metrics;
+    let wines = this.state.wineData;
+    let wineAvgScores = this.state.wineAvgScores;
 
     return (
       <div className={classes.layout}>
@@ -105,9 +117,7 @@ class ResultsBody extends React.Component {
                   title="Wine Ranking"
                 />
                 <CardContent className={classes.wineList}>
-                  {this.state.wineScores && (
-                    <WineList wines={this.state.wineScores} />
-                  )}
+                  {wineAvgScores && <WineList wines={wineAvgScores} />}
                 </CardContent>
               </Card>
             </Grid>
@@ -118,34 +128,31 @@ class ResultsBody extends React.Component {
                   title="Average Wine Scores"
                 />
                 <CardContent className={classes.chart}>
-                  {this.state.metrics && this.state.metricScores && (
-                    <RadarChart
-                      metrics={this.state.metrics}
-                      wines={this.state.metricScores}
-                    />
+                  {metrics && wines && (
+                    <RadarChart metrics={metrics} wines={wines} />
                   )}
                 </CardContent>
               </Card>
             </Grid>
-            {this.state.metricScores &&
-              this.state.metricScores.map(wine => (
+            {metrics &&
+              wines &&
+              wines.map(wine => (
                 <Grid item md={4} xs={12}>
                   <Card className={classes.card}>
                     <CardHeader
                       className={classes.cardHeader}
-                      title={wine._id.wine.name}
+                      title={wine.name}
                     />
                     <CardContent className={classes.chart}>
-                      {this.state.metrics && this.state.metricScores && (
-                        <BarChart
-                          metrics={this.state.metrics}
-                          wines={this.state.metricScores.slice(
-                            [this.state.metricScores.indexOf(wine)],
-                            this.state.metricScores.indexOf(wine) + 1
-                          )}
-                        />
-                      )}
+                      <BarChart
+                        metrics={metrics}
+                        wines={wines.slice(
+                          [wines.indexOf(wine)],
+                          wines.indexOf(wine) + 1
+                        )}
+                      />
                     </CardContent>
+                    <CardContent>{this.getRandomComment(wine.comments)}</CardContent>
                   </Card>
                 </Grid>
               ))}

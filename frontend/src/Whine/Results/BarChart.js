@@ -41,6 +41,7 @@ const borderColors = [
 function BarChart(props) {
   console.log(`Initialising Radar Chart`);
   let labels = props.metrics.map(metric => metric.name);
+  let wines = props.wines;
 
   let fontSize = 12;
   if (window.innerWidth < 500) {
@@ -67,19 +68,19 @@ function BarChart(props) {
 
   let chartData = [];
 
-  props.wines.forEach(wine => {
-    let wineData = wine.metrics.map(metric => metric.score);
+  wines.forEach(wine => {
+    let wineData = wine.scores.map(score => score.averageScore);
     chartData.push({
-      label: wine._id.wine.name,
+      label: wine.name,
       data: wineData,
       fill: true,
-      backgroundColor: backgroundColors[props.wines.indexOf(wine)],
-      borderColor: borderColors[props.wines.indexOf(wine)],
+      backgroundColor: backgroundColors[wines.indexOf(wine)],
+      borderColor: borderColors[wines.indexOf(wine)],
       borderWidth: 1,
-      pointBackgroundColor: borderColors[props.wines.indexOf(wine)],
+      pointBackgroundColor: borderColors[wines.indexOf(wine)],
       pointBorderColor: "#fff",
       pointHoverBackgroundColor: "#fff",
-      pointHoverBorderColor: borderColors[props.wines.indexOf(wine)]
+      pointHoverBorderColor: borderColors[wines.indexOf(wine)]
     });
   });
 

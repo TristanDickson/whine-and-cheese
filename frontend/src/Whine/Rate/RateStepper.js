@@ -43,19 +43,19 @@ class RateStepper extends React.Component {
   }
 
   async componentDidMount() {
-    await this.getParticipantData();
+    await this.getParticipantData(this.props.participant);
     await this.state.wines.forEach(wine => {
       if (!wine.comment) {
         this.createComment(this.props.participant._id, wine.wine._id);
       }
     });
-    await this.getParticipantData();
+    await this.getParticipantData(this.props.participant);
   }
 
-  getParticipantData = async () => {
+  getParticipantData = async (participant) => {
     await fetch(
       `${process.env.REACT_APP_BACKEND_URL}/api/participant_data?id=${
-        this.props.participant._id
+        participant._id
       }`
     )
       .then(response => {

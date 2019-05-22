@@ -61,6 +61,11 @@ const drawerProps = {
         fieldName: "label",
         elementId: "label",
         displayName: "Label"
+      },
+      {
+        fieldName: "colour",
+        elementId: "colour",
+        displayName: "Colour"
       }
     ]
   },

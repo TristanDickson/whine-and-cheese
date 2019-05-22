@@ -208,7 +208,7 @@ class ItemDrawer extends React.Component {
           label={field.displayName}
           className={field_style}
           margin="normal"
-          value={selectedItem[field.fieldName]}
+          value={field.fieldName ? selectedItem[field.fieldName] : ""}
           onChange={event =>
             this.updateItem(
               selectedItem._id,

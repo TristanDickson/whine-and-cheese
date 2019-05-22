@@ -34,13 +34,12 @@ let buildWineList = wines => {
   let wineList = [];
   for (let index = 0; index < wines.length; index++) {
     const wine = wines[index];
-    console.log(wine._id.wine);
     wineList.push(
       <ListItem key={wines.indexOf(wine)}>
         <Avatar>{getWineRankingIcon(wines.indexOf(wine))}</Avatar>
         <ListItemText
-          primary={wine._id.wine.name}
-          secondary={wine._id.wine.label}
+          primary={wine.name}
+          secondary={wine.label}
         />
       </ListItem>
     );
@@ -50,7 +49,6 @@ let buildWineList = wines => {
 
 function WineList(props) {
   const { classes } = props;
-  console.log(props.wines);
   return <List className={classes.root}>{buildWineList(props.wines)}</List>;
 }
 
