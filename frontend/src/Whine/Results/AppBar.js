@@ -6,7 +6,7 @@ import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import IconButton from "@material-ui/core/IconButton";
 import MenuIcon from "@material-ui/icons/Menu";
-import Menu from "./AppBarMenu";
+//import AppBarMenu from "./AppBarMenu";
 
 const styles = {
   root: {
@@ -21,8 +21,8 @@ const styles = {
   }
 };
 
-let wines = ["Wine 1", "Wine 2", "Wine 3"];
-let people = ["Person 1", "Person 2", "Person 3"];
+//let wines = ["Wine 1", "Wine 2", "Wine 3"];
+//let people = ["Person 1", "Person 2", "Person 3"];
 
 class WineAppBar extends Component {
   constructor(props) {

@@ -1,7 +1,7 @@
 import React from "react";
 import { Radar } from "react-chartjs-2";
 
-const graphColors = {
+/*const graphColors = {
   Red: {
     fill: "rgb(220, 53, 69, 0.2)",
     border: "rgb(220, 53, 69, 1)"
@@ -18,7 +18,7 @@ const graphColors = {
     fill: "rgb(110, 70, 200, 0.2)",
     border: "rgb(110, 70, 200, 1)"
   }
-};
+};*/
 
 const backgroundColors = [
   "rgba(255, 99, 132, 0.2)",

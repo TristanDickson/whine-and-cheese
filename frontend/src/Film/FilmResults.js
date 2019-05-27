@@ -44,6 +44,9 @@ var featuredComment = [2, 5];
 */
 
 const theme = createMuiTheme({
+  typography: {
+    useNextVariants: true,
+  },
   palette: {
     type: "dark",
     primary: {

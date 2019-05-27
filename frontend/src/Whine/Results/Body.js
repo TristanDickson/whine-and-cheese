@@ -9,6 +9,7 @@ import CardContent from "@material-ui/core/CardContent";
 import WineList from "./WineList";
 import RadarChart from "./RadarChart";
 import BarChart from "./BarChart";
+import { Typography } from "@material-ui/core";
 
 const styles = theme => {
   return {
@@ -43,6 +44,9 @@ const styles = theme => {
     },
     wineList: {
       paddingTop: 0
+    },
+    author: {
+      fontStyle: "italic"
     }
   };
 };
@@ -93,12 +97,30 @@ class ResultsBody extends React.Component {
     return data;
   };
 
-  getRandomComment = comments => {
-    let filledComments = comments.filter(comment => comment.comment != "");
+  getRandomComment = (classes, comments) => {
+    let filledComments = comments.filter(comment => comment.comment !== "");
     console.log(filledComments);
-    let selectedComment = filledComments[Math.floor(Math.random() * filledComments.length)];
-    return `"${selectedComment.comment}" - ${selectedComment.participant.firstName} ${selectedComment.participant.lastName}`
-  }  
+    if (filledComments.length > 0) {
+      let selectedComment =
+        filledComments[Math.floor(Math.random() * filledComments.length)];
+      return (
+        <div>
+          <Typography inline>{`"${selectedComment.comment}" - `}</Typography>
+          <Typography inline className={classes.author}>
+            {`${selectedComment.participant.firstName} ${
+              selectedComment.participant.lastName
+            }`}
+          </Typography>
+        </div>
+      );
+    } else {
+      return (
+        <div>
+          <Typography>No comments made</Typography>
+        </div>
+      );
+    }
+  };
 
   render() {
     const { classes } = this.props;
@@ -137,7 +159,7 @@ class ResultsBody extends React.Component {
             {metrics &&
               wines &&
               wines.map(wine => (
-                <Grid item md={4} xs={12}>
+                <Grid key={wine._id} item md={4} xs={12}>
                   <Card className={classes.card}>
                     <CardHeader
                       className={classes.cardHeader}
@@ -152,7 +174,9 @@ class ResultsBody extends React.Component {
                         )}
                       />
                     </CardContent>
-                    <CardContent>{this.getRandomComment(wine.comments)}</CardContent>
+                    <CardContent>
+                      {this.getRandomComment(classes, wine.comments)}
+                    </CardContent>
                   </Card>
                 </Grid>
               ))}

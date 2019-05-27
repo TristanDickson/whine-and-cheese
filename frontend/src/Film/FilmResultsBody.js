@@ -12,8 +12,6 @@ import banner from "./review-header.jpg";
 import poster from "./poster.jpg";
 import jeff3 from "./jeff-3.png";
 import Banner from "../Common/Banner";
-import PieChart from "./FilmResultsPieChart";
-import BarChart from "./FilmResultsBarChart";
 
 let film = {
   title: "True Grit",
@@ -100,13 +98,19 @@ function ComplexGrid(props) {
         <Card className={classes.reviewHeader}>
           <Grid className={classes.reviewHeaderGrid} container spacing={24}>
             <Grid item xs={4}>
-              <PieChart chartWidth={200} chartHeight={200} />
+              {
+                //<PieChart chartWidth={200} chartHeight={200} />
+              }
             </Grid>
             <Grid item xs={4}>
-              <PieChart />
+              {
+                //<PieChart />
+              }
             </Grid>
             <Grid item xs={4}>
-              <PieChart />
+              {
+                //<PieChart />
+              }
             </Grid>
           </Grid>
         </Card>

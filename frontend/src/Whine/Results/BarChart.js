@@ -1,7 +1,7 @@
 import React from "react";
 import { Bar } from "react-chartjs-2";
 
-const graphColors = {
+/*const graphColors = {
   Red: {
     fill: "rgb(220, 53, 69, 0.2)",
     border: "rgb(220, 53, 69, 1)"
@@ -18,7 +18,7 @@ const graphColors = {
     fill: "rgb(110, 70, 200, 0.2)",
     border: "rgb(110, 70, 200, 1)"
   }
-};
+};*/
 
 const backgroundColors = [
   "rgba(255, 99, 132, 0.2)",
@@ -39,16 +39,9 @@ const borderColors = [
 ];
 
 function BarChart(props) {
-  console.log(`Initialising Radar Chart`);
+  console.log(`Initialising Bar Chart`);
   let labels = props.metrics.map(metric => metric.name);
   let wines = props.wines;
-
-  let fontSize = 12;
-  if (window.innerWidth < 500) {
-    fontSize = 8;
-  } else if (window.innerWidth < 1000) {
-    fontSize = 10;
-  }
 
   let options = {
     scales: {

@@ -1,10 +1,12 @@
-import { createMuiTheme } from '@material-ui/core/styles';
+import { createMuiTheme } from "@material-ui/core/styles";
 
-const palette = {
-  primary: { main: '#3E2723' },
-  secondary: { main: '#a50000' }
+const typography = {
+  useNextVariants: true
 };
-const themeName = 'Bright Red English Walnut Emu';
+const palette = {
+  primary: { main: "#3E2723" },
+  secondary: { main: "#a50000" }
+};
+const themeName = "Bright Red English Walnut Emu";
 
-export default createMuiTheme({ palette, themeName });
-
+export default createMuiTheme({themeName, typography, palette});

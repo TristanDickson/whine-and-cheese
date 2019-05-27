@@ -140,7 +140,7 @@ app.get("/api/checkCode", function(req, res) {
     });
 });
 
-app.get("/api/average_scores_by_wine", (req, res) => {
+app.get("/api/wine_average_scores", (req, res) => {
   db.collection("scores")
     .aggregate([
       {
@@ -159,7 +159,15 @@ app.get("/api/average_scores_by_wine", (req, res) => {
           avg_score: { $avg: "$score" }
         }
       },
-      { $sort: { avg_score: -1 } }
+      { $sort: { avg_score: -1 } },
+      {
+        $project: {
+          _id: "$_id.wine._id",
+          name: "$_id.wine.name",
+          label: "$_id.wine.label",
+          avg_score: "$avg_score"
+        }
+      }
     ])
     .toArray((err, result) => {
       if (err) return console.log(err);
@@ -167,42 +175,73 @@ app.get("/api/average_scores_by_wine", (req, res) => {
     });
 });
 
-app.get("/api/average_scores_by_metric", (req, res) => {
-  db.collection("scores")
+app.get("/api/wine_data", (req, res) => {
+  db.collection("wines")
     .aggregate([
       {
         $lookup: {
-          from: "wines",
-          localField: "wine_id",
-          foreignField: "_id",
-          as: "wine"
+          from: "scores",
+          let: { wine_id: "$_id" },
+          pipeline: [
+            {
+              $match: {
+                $expr: { $eq: ["$wine_id", "$$wine_id"] }
+              }
+            },
+            {
+              $group: {
+                _id: {
+                  metric_id: "$metric_id"
+                },
+                avg_score: { $avg: "$score" }
+              }
+            },
+            {
+              $lookup: {
+                from: "metrics",
+                localField: "_id.metric_id",
+                foreignField: "_id",
+                as: "metric"
+              }
+            },
+            {
+              $project: {
+                _id: 0,
+                metric: "$metric",
+                averageScore: "$avg_score"
+              }
+            }
+          ],
+          as: "scores"
         }
       },
       {
         $lookup: {
-          from: "metrics",
-          localField: "metric_id",
-          foreignField: "_id",
-          as: "metric"
-        }
-      },
-      { $sort: { "metric._id": 1 } },
-      { $sort: { "wine._id": 1 } },
-      {
-        $group: {
-          _id: {
-            wine: "$wine",
-            metric: "$metric"
-          },
-          avg_score: { $avg: "$score" }
-        }
-      },
-      {
-        $group: {
-          _id: {
-            wine: { $arrayElemAt: ["$_id.wine", 0] }
-          },
-          metrics: { $push: { metric: "$_id.metric", score: "$avg_score" } }
+          from: "comments",
+          let: { wine_id: "$_id" },
+          pipeline: [
+            {
+              $match: {
+                $expr: { $eq: ["$wine_id", "$$wine_id"] }
+              }
+            },
+            {
+              $lookup: {
+                from: "participants",
+                localField: "participant_id",
+                foreignField: "_id",
+                as: "participant"
+              }
+            },
+            {
+              $project: {
+                _id: 0,
+                participant: {$arrayElemAt: ["$participant", 0]},
+                comment: "$comment"
+              }
+            }
+          ],
+          as: "comments"
         }
       }
     ])
@@ -274,60 +313,7 @@ app.get("/api/participant_data", (req, res) => {
           comment: "$_id.comment",
           scores: "$scores"
         }
-      },
-      { $sort: { "wine.label": 1 } }
-    ])
-    .toArray((err, result) => {
-      if (err) return console.log(err);
-      res.send(result);
-    });
-});
-
-app.get("/api/participant_scores", (req, res) => {
-  db.collection("scores")
-    .aggregate([
-      { $match: { participant_id: ObjectId(req.query.id) } },
-      {
-        $lookup: {
-          from: "participants",
-          localField: "participant_id",
-          foreignField: "_id",
-          as: "participant"
-        }
-      },
-      {
-        $lookup: {
-          from: "wines",
-          localField: "wine_id",
-          foreignField: "_id",
-          as: "wine"
-        }
-      },
-      {
-        $lookup: {
-          from: "metrics",
-          localField: "metric_id",
-          foreignField: "_id",
-          as: "metric"
-        }
-      },
-      { $sort: { "metric._id": 1 } },
-      {
-        $group: {
-          _id: {
-            participant: { $arrayElemAt: ["$participant", 0] },
-            wine: { $arrayElemAt: ["$wine", 0] }
-          },
-          scores: {
-            $push: {
-              id: "$_id",
-              metric: { $arrayElemAt: ["$metric", 0] },
-              value: "$score"
-            }
-          }
-        }
-      },
-      { $sort: { "_id.wine.label": 1 } }
+      }
     ])
     .toArray((err, result) => {
       if (err) return console.log(err);
@@ -336,9 +322,7 @@ app.get("/api/participant_scores", (req, res) => {
 });
 
 app.put("/api/scores", (req, res) => {
-  console.log(
-    `Updating score with id: ${req.body._id}`
-  );
+  console.log(`Updating score with id: ${req.body._id}`);
   db.collection("scores").findOneAndUpdate(
     { _id: ObjectId(req.body._id) },
     {
@@ -588,8 +572,8 @@ app.delete("/api/metrics", (req, res) => {
   );
 });
 
-app.get('/*', function (req, res) {
-  res.sendFile(path.join(__dirname, 'build', 'index.html'));
+app.get("/*", function(req, res) {
+  res.sendFile(path.join(__dirname, "build", "index.html"));
 });
 
 getCollection = async collection => {

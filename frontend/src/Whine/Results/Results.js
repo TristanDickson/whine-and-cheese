@@ -1,32 +1,36 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
-import AppBar from "./AppBar";
+import AppBar from "../Config/AppBar";
 import Body from "./Body";
 
 const styles = theme => ({
   root: {}
 });
 
-class FilmResults extends Component {
+class Results extends Component {
   constructor() {
     super();
     this.state = {};
+  }
+
+  toggleOpen = () => {
+    this.setState({open: !this.state.open});
   }
 
   render() {
     const { classes } = this.props;
     return (
       <div className={classes.root}>
-        <AppBar />
+        <AppBar history={this.props.history} open={this.state.open} toggleOpen={this.toggleOpen}/>
         <Body />
       </div>
     );
   }
 }
 
-FilmResults.propTypes = {
+Results.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
-export default withStyles(styles)(FilmResults);
+export default withStyles(styles)(Results);
