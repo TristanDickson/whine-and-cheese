@@ -8,8 +8,9 @@ import Typography from "@material-ui/core/Typography";
 import People from "@material-ui/icons/People";
 import LocalBar from "@material-ui/icons/LocalBar";
 import BarChart from "@material-ui/icons/BarChart";
-import ParticipantPane from "./ParticipantDrawer";
-import ItemDrawer from "./ItemDrawer";
+import ParticipantPane from "./ParticipantPane";
+import ItemPane from "./ItemPane";
+import SetPane from "./SetPane"
 
 import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
@@ -20,6 +21,7 @@ import Fab from "@material-ui/core/Fab";
 
 //import PersonIcon from "@material-ui/icons/Person";
 import PersonAddIcon from "@material-ui/icons/PersonAdd";
+import Dashboard from "@material-ui/icons/Dashboard";
 import DeleteIcon from "@material-ui/icons/Delete";
 
 function TabContainer(props) {
@@ -97,6 +99,23 @@ const drawerProps = [
   {
     resourceName: "api/metrics",
     displayName: "Metric",
+    fields: [
+      {
+        keyName: true,
+        fieldName: "name",
+        elementId: "name",
+        displayName: "Name"
+      },
+      {
+        fieldName: "description",
+        elementId: "description",
+        displayName: "Description"
+      }
+    ]
+  },
+  {
+    resourceName: "api/sets",
+    displayName: "Set",
     fields: [
       {
         keyName: true,
@@ -197,7 +216,6 @@ class ConfigTabs extends React.Component {
   };
 
   deleteItem = async _id => {
-    console.log(`Deleting participant with id: ${_id}`);
     let response = await fetch(
       `${process.env.REACT_APP_BACKEND_URL}/${
         drawerProps[this.state.value].resourceName
@@ -257,6 +275,7 @@ class ConfigTabs extends React.Component {
             <Tab label="Participants" icon={<People />} />
             <Tab label="Wines" icon={<LocalBar />} />
             <Tab label="Metrics" icon={<BarChart />} />
+            <Tab label="Sets" icon={<Dashboard />} />
           </Tabs>
         </AppBar>
         <FormControl variant="filled" className={classes.formControl}>
@@ -288,7 +307,7 @@ class ConfigTabs extends React.Component {
               />
             )}
             {value === 1 && (
-              <ItemDrawer
+              <ItemPane
                 config={drawerProps[value]}
                 item={selectedItem}
                 updateItem={this.updateItem}
@@ -296,9 +315,17 @@ class ConfigTabs extends React.Component {
               />
             )}
             {value === 2 && (
-              <ItemDrawer
+              <ItemPane
                 config={drawerProps[value]}
                 item={selectedItem}
+                updateItem={this.updateItem}
+                changeItem={this.handleChangeField}
+              />
+            )}
+            {value === 3 && (
+              <SetPane
+                config={drawerProps[value]}
+								item={selectedItem}
                 updateItem={this.updateItem}
                 changeItem={this.handleChangeField}
               />

@@ -69,9 +69,6 @@ class ConfigAppBar extends Component {
     const { anchorEl } = this.state;
     const profileMenuOpen = Boolean(anchorEl);
 
-    
-    console.log(this.props);
-
     return (
       <div className={classes.root}>
         <AppBar position="static">

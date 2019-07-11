@@ -13,7 +13,6 @@ class Config extends Component {
   }
 
   render() {
-    console.log(this.props);
     return (
       <div>
         <ConfigAppBar history={this.props.history} open={this.state.open} toggleOpen={this.toggleOpen}/>

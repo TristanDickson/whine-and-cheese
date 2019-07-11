@@ -23,14 +23,13 @@ const styles = theme => ({
   },
   listItem: {
     width: 240,
-    //display: "inline-flex"
+    display: "inline-flex"
   }
 });
 
 class NavDrawer extends React.Component {
   render() {
     const { classes } = this.props;
-    console.log(this.props.open);
 
     return (
       <Drawer
