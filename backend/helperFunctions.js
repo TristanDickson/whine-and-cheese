@@ -40,14 +40,11 @@ export const updateItem = async (db, collection, id, key, value) => {
 export const deleteItem = async (db, collection, id) => {
   return new Promise((resolve, reject) => {
     console.log(`Deleting from ${collection} with id: ${id}`);
-    db.collection(collection).findOneAndDelete(
-      { _id: ObjectID(id) },
-      (err, result) => {
-        if (err) return console.log(err);
-        console.log(result);
-        resolve(result);
-      }
-    );
+    db.collection(collection).findOneAndDelete({ _id: ObjectID(id) }, (err, result) => {
+      if (err) return console.log(err);
+      console.log(result);
+      resolve(result);
+    });
   });
 };
 

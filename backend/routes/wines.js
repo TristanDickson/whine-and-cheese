@@ -13,9 +13,9 @@ module.exports = function(app, db) {
   });
 
   app.post("/api/wines", async (req, res) => {
-    let wine = await insertItem("wines", req.body);
-    let participants = await getCollection("participants");
-    let metrics = await getCollection("metrics");
+    let wine = await insertItem(db, "wines", req.body);
+    let participants = await getCollection(db, "participants");
+    let metrics = await getCollection(db, "metrics");
     participants.forEach(participant => {
       metrics.forEach(metric => {
         db.collection("scores").insertOne({
@@ -54,24 +54,11 @@ module.exports = function(app, db) {
 
   app.delete("/api/wines", async (req, res) => {
     console.log(`Deleting wine with id: ${req.body._id}`);
-    deleteItem("wines", req.body._id);
-    await db
-      .collection("scores")
-      .deleteMany({ wine_id: ObjectID(req.body._id) });
-    await db
-      .collection("comments")
-      .deleteMany({ wine_id: ObjectID(req.body._id) });
+    deleteItem(db, "wines", req.body._id);
+    await db.collection("scores").deleteMany({ wine_id: ObjectID(req.body._id) });
+    await db.collection("comments").deleteMany({ wine_id: ObjectID(req.body._id) });
     console.log(`Deleted wine with id: ${req.body._id}\n`);
     res.send(`"Deleted wine with id: ${req.body._id}"`);
-  });
-
-  app.get("/api/metrics", (req, res) => {
-    db.collection("metrics")
-      .find()
-      .toArray((err, result) => {
-        if (err) return console.log(err);
-        res.send(result);
-      });
   });
 
   app.get("/api/wine_data", (req, res) => {
@@ -109,6 +96,9 @@ module.exports = function(app, db) {
                   metric: "$metric",
                   averageScore: "$avg_score"
                 }
+              },
+              {
+                $sort: { "metric._id": 1 }
               }
             ],
             as: "scores"

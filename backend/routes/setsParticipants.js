@@ -1,30 +1,58 @@
-import {
- insertItem,
- deleteItem
-} from "../helperFunctions";
-
 const ObjectID = require("mongodb").ObjectID;
 
+const getCollection = async (db, collection, filter = {}) => {
+  return new Promise((resolve, reject) => {
+    db.collection(collection)
+      .find(filter)
+      .toArray((err, result) => {
+        if (err) reject(err);
+        resolve(result);
+      });
+  });
+};
+
+const addToSet = async (db, collection, document) => {
+  console.log(`Inserting document: ${JSON.stringify(document)} into ${collection}`);
+  return new Promise((resolve, reject) => {
+    db.collection(collection).insertOne(document, (err, result) => {
+      if (err) reject(err);
+      resolve(result);
+    });
+  });
+};
+
+const removeFromSet = async (db, collection, filter) => {
+  console.log(`Deleting from ${collection} using filter ${JSON.stringify(filter)}`);
+  return new Promise((resolve, reject) => {
+    db.collection(collection).deleteOne(filter, (err, result) => {
+			if (err) reject(err);			
+      console.log(`Deleted ${result.deletedCount} records`);
+      resolve(result);
+    });
+  });
+};
+
 module.exports = (app, db) => {
- app.get("/api/sets_participants", (req, res) => {
-   db.collection("sets_participants")
-     .find({set_id: ObjectID(req.query.id)})
-     .toArray((err, result) => {
-       if (err) return console.log(err);
-       res.send(result);
-     });
- });
+  app.get("/api/sets_participants", (req, res) => {
+    db.collection("sets_participants")
+      .find()
+      .toArray((err, result) => {
+        if (err) return console.log(err);
+        res.send(result);
+      });
+  });
 
- app.post("/api/sets_participants", async (req, res) => {
-   console.log(`Adding participant with id ${req.body.participant_id} to set with id: ${req.body.set_id}`);
-   let set_participant = await insertItem(db, "sets_participants", req.body);
-   console.log()
-   res.send(`["Added participant with id ${req.body.participant_id} to set with id: ${req.body.set_id}"]`);
- });
+  app.post("/api/sets_participants", async (req, res) => {
+    let insertResult = await addToSet(db, "sets_participants", req.body);
+    let sets_participants = await getCollection(db, "sets_participants");
+    res.send(sets_participants);
+  });
 
- app.delete("/api/sets_participants", async (req, res) => {
-   console.log(`Deleting set_participant with id: ${req.body._id}`);
-   deleteItem(db, "sets", req.body._id);
-   res.send(`"Deleted set_participant with id: ${req.body._id}"`);
- });
+  app.delete("/api/sets_participants", async (req, res) => {
+    let deleteResults = await removeFromSet(db, "sets_participants", {
+      _id: ObjectID(req.body.id)
+    });
+    let sets_participants = await getCollection(db, "sets_participants");
+    res.send(sets_participants);
+  });
 };

@@ -6,6 +6,7 @@ module.exports = function(app, db) {
   app.get("/api/metrics", (req, res) => {
     db.collection("metrics")
       .find()
+      .sort({ _id: 1 })
       .toArray((err, result) => {
         if (err) return console.log(err);
         res.send(result);
@@ -50,13 +51,10 @@ module.exports = function(app, db) {
   app.delete("/api/metrics", (req, res) => {
     console.log(`Deleting metric with id: ${req.body._id}`);
     deleteItem(db, "metrics", req.body._id);
-    db.collection("scores").deleteMany(
-      { metric_id: ObjectID(req.body._id) },
-      (err, result) => {
-        if (err) return console.log(err);
-        console.log(result);
-        res.send(result);
-      }
-    );
+    db.collection("scores").deleteMany({ metric_id: ObjectID(req.body._id) }, (err, result) => {
+      if (err) return console.log(err);
+      console.log(result);
+      res.send(result);
+    });
   });
 };

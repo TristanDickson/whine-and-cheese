@@ -25,10 +25,11 @@ function Sliders(props) {
 
   return (
     <Grid container spacing={8} className={classes.root}>
-      <Grid item xs={12}>
+			<Grid item xs={12}>
+				{console.log(props.wine)}
         <Typography variant="h5" align="center">
           {props.wine
-            ? props.wine.label
+            ? props.wine.wine.name
             : props.start
             ? `Welcome ${props.participantName}.
               Please partake of the wines.`

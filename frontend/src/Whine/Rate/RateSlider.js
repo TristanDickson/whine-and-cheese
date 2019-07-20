@@ -55,8 +55,8 @@ class RateSlider extends React.Component {
                 thumb: classes.sliderThumb
               }}
               value={value}
-              min={0}
-              max={10}
+              min={1}
+              max={5}
               step={1}
               onChange={this.handleChange(this.props.updateScore, score)}
             />

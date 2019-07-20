@@ -19,7 +19,6 @@ import MenuItem from "@material-ui/core/MenuItem";
 import FilledInput from "@material-ui/core/FilledInput";
 import Fab from "@material-ui/core/Fab";
 
-//import PersonIcon from "@material-ui/icons/Person";
 import PersonAddIcon from "@material-ui/icons/PersonAdd";
 import Dashboard from "@material-ui/icons/Dashboard";
 import DeleteIcon from "@material-ui/icons/Delete";
@@ -50,7 +49,7 @@ const styles = theme => ({
   }
 });
 
-const drawerProps = [
+const PaneProps = [
   {
     resourceName: "api/participants",
     displayName: "Participant",
@@ -76,7 +75,7 @@ const drawerProps = [
   },
   {
     resourceName: "api/wines",
-    displayName: "Wine",
+    displayName: "Clothing Website",
     fields: [
       {
         keyName: true,
@@ -136,7 +135,7 @@ class ConfigTabs extends React.Component {
   constructor(props) {
     super();
     this.state = {
-      value: 0
+      value: 3
     };
   }
 
@@ -145,10 +144,10 @@ class ConfigTabs extends React.Component {
   }
 
   getItems = async (selectedId = null) => {
-    console.log(`Getting ${drawerProps[this.state.value].displayName}s...`);
+    console.log(`Getting ${PaneProps[this.state.value].displayName}s...`);
     let response = await fetch(
       `${process.env.REACT_APP_BACKEND_URL}/${
-        drawerProps[this.state.value].resourceName
+        PaneProps[this.state.value].resourceName
       }`
     );
     let items = await response.json();
@@ -177,12 +176,12 @@ class ConfigTabs extends React.Component {
 
   addItem = async () => {
     let json = {};
-    drawerProps[this.state.value].fields.forEach(field => {
+    PaneProps[this.state.value].fields.forEach(field => {
       json[field.fieldName] = ""
     });
     let response = await fetch(
       `${process.env.REACT_APP_BACKEND_URL}/${
-        drawerProps[this.state.value].resourceName
+        PaneProps[this.state.value].resourceName
       }`,
       {
         method: "post",
@@ -197,7 +196,7 @@ class ConfigTabs extends React.Component {
   updateItem = async (_id, key, value) => {
     let response = await fetch(
       `${process.env.REACT_APP_BACKEND_URL}/${
-        drawerProps[this.state.value].resourceName
+        PaneProps[this.state.value].resourceName
       }`,
       {
         method: "put",
@@ -218,7 +217,7 @@ class ConfigTabs extends React.Component {
   deleteItem = async _id => {
     let response = await fetch(
       `${process.env.REACT_APP_BACKEND_URL}/${
-        drawerProps[this.state.value].resourceName
+        PaneProps[this.state.value].resourceName
       }`,
       {
         method: "delete",
@@ -260,7 +259,7 @@ class ConfigTabs extends React.Component {
     if (items && selectedId) {
       selectedItem = items.find(item => item._id === selectedId);
     }
-    let config = drawerProps[value];
+    let config = PaneProps[value];
 
     return (
       <div className={classes.root}>
@@ -273,7 +272,7 @@ class ConfigTabs extends React.Component {
             variant="fullWidth"
           >
             <Tab label="Participants" icon={<People />} />
-            <Tab label="Wines" icon={<LocalBar />} />
+            <Tab label="Clothing Websites" icon={<LocalBar />} />
             <Tab label="Metrics" icon={<BarChart />} />
             <Tab label="Sets" icon={<Dashboard />} />
           </Tabs>
@@ -284,7 +283,7 @@ class ConfigTabs extends React.Component {
             <Select
               value={selectedId}
               onChange={this.handleChangeItem}
-              input={<FilledInput name="age" id="item-select" />}
+              input={<FilledInput name="item" id="item-select" />}
             >
               {items.map(item => (
                 <MenuItem key={item._id} value={item._id}>
@@ -300,7 +299,7 @@ class ConfigTabs extends React.Component {
           <TabContainer>
             {value === 0 && (
               <ParticipantPane
-                config={drawerProps[value]}
+                config={PaneProps[value]}
                 item={selectedItem}
                 updateItem={this.updateItem}
                 changeItem={this.handleChangeField}
@@ -308,7 +307,7 @@ class ConfigTabs extends React.Component {
             )}
             {value === 1 && (
               <ItemPane
-                config={drawerProps[value]}
+                config={PaneProps[value]}
                 item={selectedItem}
                 updateItem={this.updateItem}
                 changeItem={this.handleChangeField}
@@ -316,7 +315,7 @@ class ConfigTabs extends React.Component {
             )}
             {value === 2 && (
               <ItemPane
-                config={drawerProps[value]}
+                config={PaneProps[value]}
                 item={selectedItem}
                 updateItem={this.updateItem}
                 changeItem={this.handleChangeField}
@@ -324,7 +323,7 @@ class ConfigTabs extends React.Component {
             )}
             {value === 3 && (
               <SetPane
-                config={drawerProps[value]}
+                config={PaneProps[value]}
 								item={selectedItem}
                 updateItem={this.updateItem}
                 changeItem={this.handleChangeField}

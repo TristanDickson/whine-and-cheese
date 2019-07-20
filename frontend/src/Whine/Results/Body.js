@@ -54,7 +54,7 @@ const styles = theme => {
 class ResultsBody extends React.Component {
   constructor() {
     super();
-    this.state = {};
+    this.state = { metrics: "", wineData: "" };
   }
 
   async componentDidMount() {
@@ -72,44 +72,34 @@ class ResultsBody extends React.Component {
 
   getMetrics = async () => {
     console.log(`Getting metrics`);
-    let response = await fetch(
-      `${process.env.REACT_APP_BACKEND_URL}/api/metrics`
-    );
+    let response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/metrics`);
     let metrics = await response.json();
     return metrics;
   };
 
   getWineAvgScores = async () => {
     console.log(`Getting wine average scores`);
-    let response = await fetch(
-      `${process.env.REACT_APP_BACKEND_URL}/api/wine_average_scores`
-    );
+    let response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/wine_average_scores`);
     let scores = await response.json();
     return scores;
   };
 
   getWineData = async () => {
     console.log(`Getting wine data`);
-    let response = await fetch(
-      `${process.env.REACT_APP_BACKEND_URL}/api/wine_data`
-    );
+    let response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/wine_data`);
     let data = await response.json();
     return data;
   };
 
   getRandomComment = (classes, comments) => {
     let filledComments = comments.filter(comment => comment.comment !== "");
-    console.log(filledComments);
     if (filledComments.length > 0) {
-      let selectedComment =
-        filledComments[Math.floor(Math.random() * filledComments.length)];
+      let selectedComment = filledComments[Math.floor(Math.random() * filledComments.length)];
       return (
         <div>
           <Typography inline>{`"${selectedComment.comment}" - `}</Typography>
           <Typography inline className={classes.author}>
-            {`${selectedComment.participant.firstName} ${
-              selectedComment.participant.lastName
-            }`}
+            {`${selectedComment.participant.firstName} ${selectedComment.participant.lastName}`}
           </Typography>
         </div>
       );
@@ -128,16 +118,16 @@ class ResultsBody extends React.Component {
     let wines = this.state.wineData;
     let wineAvgScores = this.state.wineAvgScores;
 
+    console.log(metrics);
+    console.log(wines);
+
     return (
       <div className={classes.layout}>
         <Paper className={classes.reviewHeader}>
           <Grid className={classes.reviewHeaderGrid} container spacing={24}>
             <Grid item md={4} xs={12}>
               <Card className={classes.card}>
-                <CardHeader
-                  className={classes.cardHeader}
-                  title="Wine Ranking"
-                />
+                <CardHeader className={classes.cardHeader} title="Wine Ranking" />
                 <CardContent className={classes.wineList}>
                   {wineAvgScores && <WineList wines={wineAvgScores} />}
                 </CardContent>
@@ -145,14 +135,9 @@ class ResultsBody extends React.Component {
             </Grid>
             <Grid item md={8} xs={12}>
               <Card className={classes.card}>
-                <CardHeader
-                  className={classes.cardHeader}
-                  title="Average Wine Scores"
-                />
+                <CardHeader className={classes.cardHeader} title="Average Wine Scores" />
                 <CardContent className={classes.chart}>
-                  {metrics && wines && (
-                    <RadarChart metrics={metrics} wines={wines} />
-                  )}
+                  {metrics && wines && <RadarChart metrics={metrics} wines={wines} />}
                 </CardContent>
               </Card>
             </Grid>
@@ -161,22 +146,14 @@ class ResultsBody extends React.Component {
               wines.map(wine => (
                 <Grid key={wine._id} item md={4} xs={12}>
                   <Card className={classes.card}>
-                    <CardHeader
-                      className={classes.cardHeader}
-                      title={wine.name}
-                    />
+                    <CardHeader className={classes.cardHeader} title={wine.name} />
                     <CardContent className={classes.chart}>
                       <BarChart
                         metrics={metrics}
-                        wines={wines.slice(
-                          [wines.indexOf(wine)],
-                          wines.indexOf(wine) + 1
-                        )}
+                        wines={wines.slice([wines.indexOf(wine)], wines.indexOf(wine) + 1)}
                       />
                     </CardContent>
-                    <CardContent>
-                      {this.getRandomComment(classes, wine.comments)}
-                    </CardContent>
+                    <CardContent>{this.getRandomComment(classes, wine.comments)}</CardContent>
                   </Card>
                 </Grid>
               ))}

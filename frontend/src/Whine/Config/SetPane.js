@@ -3,14 +3,17 @@ import { withStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
 import TextField from "@material-ui/core/TextField";
 
-import Select from "react-select";
+import ParticipantSelect from "./ParticipantSelect";
 
 import { connect } from "react-redux";
 import {
   fetchParticipants,
   fetchWines,
   fetchMetrics,
-  addParticipantToSet
+  fetchSets,
+  fetchSetsParticipants,
+  addParticipantToSet,
+  removeParticipantFromSet
 } from "../../State/actions";
 
 const styles = theme => ({
@@ -31,36 +34,49 @@ const styles = theme => ({
       width: 125
     }
   },
-  select: {
-    //width: 200
-  },
-  button: {
+  fab: {
     margin: theme.spacing.unit
+  },
+  errorMessage: {
+    margin: "10px",
+    color: "red"
   }
 });
 
 class SetPane extends Component {
   constructor(props) {
     super();
-    this.fetchParticipants = props.fetchParticipants;
-    this.fetchWines = props.fetchWines;
-		this.fetchMetrics = props.fetchMetrics;
-		this.addParticipantToSet = props.addParticipantToSet;
+
+    this.state = {
+      selected_participant_id: "",
+      selected_set_id: "",
+      validInput: true
+    };
   }
 
   componentDidMount() {
-    this.fetchParticipants();
-    this.fetchWines();
-    this.fetchMetrics();
+    this.props.fetchParticipants();
+    this.props.fetchSets();
+    this.props.fetchSetsParticipants();
+  }
+
+  changeSet(event) {
+    if (event) {
+      this.setState({
+        selected_set_id: event.value
+      });
+    } else {
+      this.setState({
+        selected_set_id: ""
+      });
+    }
   }
 
   render() {
     const { classes } = this.props;
+
     let item = this.props.item;
     let fields = this.props.config.fields;
-    let participants = this.props.participants.participants;
-    let wines = this.props.wines.wines;
-    let metrics = this.props.metrics.metrics;
 
     return (
       <div
@@ -83,50 +99,16 @@ class SetPane extends Component {
                   margin="normal"
                   value={item[field.fieldName] || ""}
                   onChange={event =>
-                    this.props.changeItem(
-                      item._id,
-                      field.fieldName,
-                      event.target.value
-                    )
+                    this.props.changeItem(item._id, field.fieldName, event.target.value)
                   }
                   onBlur={event =>
-                    this.props.updateItem(
-                      item._id,
-                      field.fieldName,
-                      event.target.value
-                    )
+                    this.props.updateItem(item._id, field.fieldName, event.target.value)
                   }
                 />
               ))}
-            </Grid>
-            <Grid container spacing={24}>
-              <Grid item md={4} xs={12}>
-                <Select
-                  className={classes.select}
-                  options={participants.map(participant => ({
-                    value: participant._id,
-                    label: `${participant.firstName} ${participant.lastName}`
-                  }))}
-                />
-              </Grid>
-              <Grid item md={4} xs={12}>
-                <Select
-                  className={classes.select}
-                  options={wines.map(wine => ({
-                    value: wine._id,
-                    label: wine.name
-                  }))}
-                />
-              </Grid>
-              <Grid item md={4} xs={12}>
-                <Select
-                  className={classes.select}
-                  options={metrics.map(metric => ({
-                    value: metric._id,
-                    label: metric.name
-                  }))}
-                />
-              </Grid>
+						</Grid>
+						<Grid>
+              <ParticipantSelect set_id={item._id} />
             </Grid>
           </div>
         ) : null}
@@ -136,11 +118,15 @@ class SetPane extends Component {
 }
 
 const mapStateToProps = state => ({ ...state });
+
 const mapDispatchToProps = {
   fetchParticipants,
   fetchWines,
   fetchMetrics,
-  addParticipantToSet
+  fetchSets,
+  fetchSetsParticipants,
+  addParticipantToSet,
+  removeParticipantFromSet
 };
 
 export default connect(
