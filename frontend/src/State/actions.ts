@@ -2,10 +2,10 @@ export {
   fetchParticipants,
   fetchParticipantsSuccess,
   fetchParticipantsFailure
-} from "./participants";
-export { fetchWines, fetchWinesSuccess, fetchWinesFailure } from "./wines";
-export { fetchMetrics, fetchMetricsSuccess, fetchMetricsFailure } from "./metrics";
-export { fetchSets, fetchSetsSuccess, fetchSetsFailure } from "./sets";
+} from "./Models/participants";
+export { fetchSubjects, fetchSubjectsSuccess, fetchSubjectsFailure } from "./Models/subjects";
+export { fetchQuestions, fetchQuestionsSuccess, fetchQuestionsFailure } from "./Models/questions";
+export { fetchSets, fetchSetsSuccess, fetchSetsFailure } from "./Models/sets";
 export {
   fetchSetsParticipants,
   fetchSetsParticipantsSuccess,
@@ -16,20 +16,20 @@ export {
   removeParticipantFromSet,
   removeParticipantFromSetSuccess,
   removeParticipantFromSetFailure
-} from "./setsParticipants";
+} from "./Models/setsParticipants";
 export {
-  fetchSetsWines,
-  fetchSetsWinesSuccess,
-  fetchSetsWinesFailure,
-  addWineToSet,
-  addWineToSetSuccess,
-  addWineToSetFailure
-} from "./setsWines";
+  fetchSetsSubjects,
+  fetchSetsSubjectsSuccess,
+  fetchSetsSubjectsFailure,
+  addSubjectToSet,
+  addSubjectToSetSuccess,
+  addSubjectToSetFailure
+} from "./Models/setsSubjects";
 export {
-  fetchSetsMetrics,
-  fetchSetsMetricsSuccess,
-  fetchSetsMetricsFailure,
-  addMetricToSet,
-  addMetricToSetSuccess,
-  addMetricToSetFailure
-} from "./setsMetrics";
+  fetchSetsQuestions,
+  fetchSetsQuestionsSuccess,
+  fetchSetsQuestionsFailure,
+  addQuestionToSet,
+  addQuestionToSetSuccess,
+  addQuestionToSetFailure
+} from "./Models/setsQuestions";

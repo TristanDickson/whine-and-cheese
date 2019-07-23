@@ -1,18 +1,18 @@
 import { combineReducers } from "redux";
-import { participants } from "./participants";
-import { wines } from "./wines";
-import { metrics } from "./metrics";
-import { sets } from "./sets";
-import { sets_participants } from "./setsParticipants";
-import { sets_wines } from "./setsWines";
-import { sets_metrics } from "./setsMetrics";
+import { participants } from "./Models/participants";
+import { subjects } from "./Models/subjects";
+import { questions } from "./Models/questions";
+import { sets } from "./Models/sets";
+import { sets_participants } from "./Models/setsParticipants";
+import { sets_subjects } from "./Models/setsSubjects";
+import { sets_questions } from "./Models/setsQuestions";
 
 export const rootReducer = combineReducers({
   participants,
-  wines,
-  metrics,
+  subjects,
+  questions,
   sets,
   sets_participants,
-  sets_wines,
-  sets_metrics
+  sets_subjects,
+  sets_questions
 });

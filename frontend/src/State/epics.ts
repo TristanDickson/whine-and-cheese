@@ -1,26 +1,26 @@
 import { combineEpics } from "redux-observable";
-import { fetchParticipantsEpic } from "./participants";
-import { fetchWinesEpic } from "./wines";
-import { fetchMetricsEpic } from "./metrics";
-import { fetchSetsEpic } from "./sets";
+import { fetchParticipantsEpic } from "./Models/participants";
+import { fetchSubjectsEpic } from "./Models/subjects";
+import { fetchQuestionsEpic } from "./Models/questions";
+import { fetchSetsEpic } from "./Models/sets";
 import {
   fetchSetsParticipantsEpic,
   addParticipantToSetEpic,
   removeParticipantFromSetEpic
-} from "./setsParticipants";
-import { fetchSetsWinesEpic, addWineToSetEpic } from "./setsWines";
-import { fetchSetsMetricsEpic, addMetricToSetEpic } from "./setsMetrics";
+} from "./Models/setsParticipants";
+import { fetchSetsSubjectsEpic, addSubjectToSetEpic } from "./Models/setsSubjects";
+import { fetchSetsQuestionsEpic, addQuestionToSetEpic } from "./Models/setsQuestions";
 
 export const rootEpic = combineEpics(
   fetchParticipantsEpic,
-  fetchWinesEpic,
-  fetchMetricsEpic,
+  fetchSubjectsEpic,
+  fetchQuestionsEpic,
   fetchSetsEpic,
   fetchSetsParticipantsEpic,
   addParticipantToSetEpic,
   removeParticipantFromSetEpic,
-  fetchSetsWinesEpic,
-  addWineToSetEpic,
-  fetchSetsMetricsEpic,
-  addMetricToSetEpic
+  fetchSetsSubjectsEpic,
+  addSubjectToSetEpic,
+  fetchSetsQuestionsEpic,
+  addQuestionToSetEpic
 );

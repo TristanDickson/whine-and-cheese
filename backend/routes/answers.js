@@ -33,8 +33,8 @@ const removeFromSet = async (db, collection, filter) => {
 };
 
 module.exports = (app, db) => {
-  app.get("/api/sets_wines", (req, res) => {
-    db.collection("sets_wines")
+  app.get("/api/answers", (req, res) => {
+    db.collection("answers")
       .find()
       .toArray((err, result) => {
         if (err) return console.log(err);
@@ -42,17 +42,17 @@ module.exports = (app, db) => {
       });
   });
 
-  app.post("/api/sets_wines", async (req, res) => {
-    let insertResult = await addToSet(db, "sets_wines", req.body);
-    let sets_wines = await getCollection(db, "sets_wines");
-    res.send(sets_wines);
+  app.post("/api/answers", async (req, res) => {
+    let insertResult = await addToSet(db, "answers", req.body);
+    let answers = await getCollection(db, "answers");
+    res.send(answers);
   });
 
-  app.delete("/api/sets_wines", async (req, res) => {
-    let deleteResults = await removeFromSet(db, "sets_wines", {
+  app.delete("/api/answers", async (req, res) => {
+    let deleteResults = await removeFromSet(db, "answers", {
       _id: ObjectID(req.body.id)
     });
-    let sets_wines = await getCollection(db, "sets_wines");
-    res.send(sets_wines);
+    let answers = await getCollection(db, "answers");
+    res.send(answers);
   });
 };

@@ -8,8 +8,8 @@ import ParticipantSelect from "./ParticipantSelect";
 import { connect } from "react-redux";
 import {
   fetchParticipants,
-  fetchWines,
-  fetchMetrics,
+  fetchSubjects,
+  fetchQuestions,
   fetchSets,
   fetchSetsParticipants,
   addParticipantToSet,
@@ -45,7 +45,7 @@ const styles = theme => ({
 
 class SetPane extends Component {
   constructor(props) {
-    super();
+    super(props);
 
     this.state = {
       selected_participant_id: "",
@@ -106,8 +106,8 @@ class SetPane extends Component {
                   }
                 />
               ))}
-						</Grid>
-						<Grid>
+            </Grid>
+            <Grid>
               <ParticipantSelect set_id={item._id} />
             </Grid>
           </div>
@@ -121,8 +121,8 @@ const mapStateToProps = state => ({ ...state });
 
 const mapDispatchToProps = {
   fetchParticipants,
-  fetchWines,
-  fetchMetrics,
+  fetchSubjects,
+  fetchQuestions,
   fetchSets,
   fetchSetsParticipants,
   addParticipantToSet,
