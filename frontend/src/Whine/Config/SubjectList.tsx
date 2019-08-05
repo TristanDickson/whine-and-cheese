@@ -56,9 +56,10 @@ class SubjectList extends Component<Props, State> {
     return sets_subjects
       .filter((set_subject: any) => set_subject.set_id === set_id)
       .map((set_subject: any) => (
-        <Fragment>
-          <Grid item xs={10}>
-            <Typography className={classes.typography} key={set_subject._id}>
+        <Fragment key={set_subject._id}>
+          <Grid item xs={1}/>
+          <Grid item xs={9}>
+            <Typography className={classes.typography} >
               {[
                 subjects.find(
                   (subject: any) => subject._id === set_subject.subject_id

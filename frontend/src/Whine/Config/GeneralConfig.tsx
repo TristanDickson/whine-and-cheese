@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { WithStyles, createStyles } from "@material-ui/core";
 import ConfigAppBar from "./ConfigAppBar";
+import GeneralConfigTabs from "./GeneralConfigTabs";
 
 const styles = createStyles({});
 
@@ -30,6 +31,7 @@ class GeneralConfig extends Component<Props, State> {
           open={this.state.open}
           toggleOpen={this.toggleOpen}
         />
+        <GeneralConfigTabs />
       </div>
     );
   }

@@ -45,10 +45,11 @@
         "displayName": "Label"
       },
       {
-        "type": "text",
+        "type": "dropdown",
         "fieldName": "colour",
         "elementId": "colour",
-        "displayName": "Colour"
+        "displayName": "Colour",
+        "options": ["Red", "White", "Rose"]
       }
     ]
   },
@@ -62,7 +63,7 @@
         "fieldName": "type",
         "elementId": "type",
         "displayName": "Type",
-        "options": ["slider", "textbox"]
+        "options": ["Slider", "Textbox"]
       },
       {
         "type": "text",

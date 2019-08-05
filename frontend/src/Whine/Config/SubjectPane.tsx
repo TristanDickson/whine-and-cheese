@@ -1,6 +1,12 @@
 import React, { Component } from "react";
 import { withStyles, createStyles, WithStyles } from "@material-ui/core/styles";
-import { Grid, TextField, Select, MenuItem } from "@material-ui/core";
+import {
+  TextField,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel
+} from "@material-ui/core";
 
 const styles = (theme: any) =>
   createStyles({
@@ -14,29 +20,26 @@ const styles = (theme: any) =>
         marginRight: "auto"
       }
     },
-    drawerPaper: {
-      [theme.breakpoints.up("xs")]: {
-        top: 56
-      },
-      [theme.breakpoints.up("md")]: {
-        top: 60
-      },
-      [theme.breakpoints.up("lg")]: {
-        top: 64
-      },
-      width: 320
+    form: {
+      display: "flex",
+      flexWrap: "wrap"
     },
-    list_subject: {
-      width: 240,
-      display: "inline-flex"
-    },
-    button: {
-      margin: theme.spacing.unit
+    formControl: {
+      margin: theme.spacing.unit,
+      minWidth: 120
     },
     textField: {
       marginLeft: theme.spacing.unit,
       marginRight: theme.spacing.unit,
-      marginTop: 5,
+      marginTop: theme.spacing.unit,
+      [theme.breakpoints.down("xs")]: {
+        width: 100
+      }
+    },
+    select: {
+      marginLeft: theme.spacing.unit,
+      marginRight: theme.spacing.unit,
+      marginTop: theme.spacing.unit,
       [theme.breakpoints.down("xs")]: {
         width: 100
       }
@@ -67,39 +70,46 @@ class SubjectPane extends Component<Props> {
         }}
       >
         {subject && fields ? (
-          <div>
-            <Grid>
-              {fields.map((field: any) => {
-                switch (field.type) {
-                  case "text":
-                    return (
-                      <TextField
-                        id={field.elementId}
-                        key={fields.indexOf(field)}
-                        label={field.displayName}
-                        className={classes.textField}
-                        margin="normal"
-                        value={subject[field.fieldName] || ""}
-                        onChange={event =>
-                          this.props.changeSubject(
-                            subject._id,
-                            field.fieldName,
-                            event.target.value
-                          )
-                        }
-                        onBlur={event =>
-                          this.props.updateSubject(
-                            subject._id,
-                            field.fieldName,
-                            event.target.value
-                          )
-                        }
-                      />
-                    );
-                  case "dropdown":
-                    return (
+          <form noValidate autoComplete="off">
+            {fields.map((field: any) => {
+              switch (field.type) {
+                case "text":
+                  return (
+                    <TextField
+                      key={fields.indexOf(field)}
+                      id={field.elementId}
+                      label={field.displayName}
+                      className={classes.textField}
+                      margin="normal"
+                      value={subject[field.fieldName] || ""}
+                      onChange={event =>
+                        this.props.changeSubject(
+                          subject._id,
+                          field.fieldName,
+                          event.target.value
+                        )
+                      }
+                      onBlur={event =>
+                        this.props.updateSubject(
+                          subject._id,
+                          field.fieldName,
+                          event.target.value
+                        )
+                      }
+                    />
+                  );
+                case "dropdown":
+                  return (
+                    <FormControl
+                      key={fields.indexOf(field)}
+                      className={classes.formControl}
+                    >
+                      <InputLabel htmlFor={field.elementId}>
+                        {field.displayName}
+                      </InputLabel>
                       <Select
-                        value={field.options[0]}
+                        id={field.elementId}
+                        value={subject[field.fieldName] || field.options[0]}
                         onChange={event => {
                           this.props.changeSubject(
                             subject._id,
@@ -113,17 +123,22 @@ class SubjectPane extends Component<Props> {
                           );
                         }}
                       >
-                        {/*field.options.map((option: string) => {
-                          <MenuItem value={option}>{option}</MenuItem>;
-                        })*/}
+                        {field.options.map((option: string) => (
+                          <MenuItem
+                            key={field.options.indexOf(option)}
+                            value={option}
+                          >
+                            {option}
+                          </MenuItem>
+                        ))}
                       </Select>
-                    );
-                  default:
-                    return null;
-                }
-              })}
-            </Grid>
-          </div>
+                    </FormControl>
+                  );
+                default:
+                  return null;
+              }
+            })}
+          </form>
         ) : null}
       </div>
     );

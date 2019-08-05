@@ -3,7 +3,8 @@ import { Application } from "express";
 import {
   addToCollection,
   getFromCollection,
-  removeFromCollection
+  removeFromCollection,
+  updateInCollection
 } from "../helperFunctions";
 
 export default (app: Application, db: Db) => {
@@ -17,16 +18,28 @@ export default (app: Application, db: Db) => {
   });
 
   app.post("/api/answers", async (req, res) => {
-    let insertResult = await addToCollection(db, "answers", req.body);
-    let answers = await getFromCollection(db, "answers");
-    res.send(answers);
+    await addToCollection(db, "answers", req.body);
+    await getFromCollection(db, "answers");
+    res.sendStatus(200);
+  });
+
+  app.put("/api/answers", async (req, res) => {
+    await updateInCollection(
+      db,
+      "answers",
+      req.body._id,
+      req.body.key,
+      req.body.value
+    );
+    await getFromCollection(db, "answers");
+    res.sendStatus(200);
   });
 
   app.delete("/api/answers", async (req, res) => {
-    let deleteResults = await removeFromCollection(db, "answers", {
+    await removeFromCollection(db, "answers", {
       _id: new ObjectID(req.body.id)
     });
-    let answers = await getFromCollection(db, "answers");
-    res.send(answers);
+    await getFromCollection(db, "answers");
+    res.sendStatus(200);
   });
 };

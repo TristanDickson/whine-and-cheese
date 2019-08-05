@@ -34,13 +34,16 @@ export const addToCollection = async (
 export const updateInCollection = async (
   db: Db,
   collection: string,
-  id: string,
+  _id: string,
   key: string,
   value: string
 ) => {
+  console.log(
+    `Updating ${collection} with id: ${_id}, setting key ${key} to value ${value}`
+  );
   return new Promise((resolve, reject) => {
     db.collection(collection).findOneAndUpdate(
-      { _id: new ObjectID(id) },
+      { _id: new ObjectID(_id) },
       {
         $set: {
           [key]: value

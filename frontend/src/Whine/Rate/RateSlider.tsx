@@ -17,8 +17,8 @@ const styles = (theme: any) =>
 
 interface Props {
   classes: any;
-  score: any;
-  updateScore: any;
+  answer: any;
+  updateAnswer: any;
 }
 
 interface State {
@@ -28,33 +28,32 @@ interface State {
 class RateSlider extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    this.state = { value: props.score.value };
+    this.state = { value: props.answer.value || 0 };
   }
 
   componentDidUpdate(prevProps: Props) {
-    if (prevProps.score !== this.props.score) {
-      this.setState({ value: this.props.score.value });
+    if (prevProps.answer !== this.props.answer) {
+      this.setState({ value: this.props.answer.value });
     }
   }
 
-  handleChange = (updateScore: any, score: any) => (
+  handleChange = (updateAnswer: any, answer: any) => (
     event: any,
     value: number
   ) => {
-    updateScore(score, value);
+    updateAnswer(answer, value);
     this.setState({ value: value });
   };
 
   render() {
-    const { classes } = this.props;
-    const score = this.props.score;
+    const { classes, answer } = this.props;
     const { value } = this.state;
 
     return (
       <Grid container spacing={8} alignItems="center" className={classes.root}>
         <Grid item xs={3} md={3}>
           <Typography align="center" variant="body2" gutterBottom>
-            {score.metric.name}
+            {answer.question.name}
           </Typography>
         </Grid>
         <Grid item xs={7} md={6}>
@@ -69,7 +68,7 @@ class RateSlider extends Component<Props, State> {
               min={1}
               max={5}
               step={1}
-              onChange={this.handleChange(this.props.updateScore, score)}
+              onChange={this.handleChange(this.props.updateAnswer, answer)}
             />
           </div>
         </Grid>

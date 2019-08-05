@@ -182,9 +182,6 @@ class ConfigTabs extends Component<Props, State> {
     let newItem: any = newState.items.find((item: any) => item._id === _id);
     newItem[key] = value;
     this.setState(newState);
-
-    console.log(`key: ${key}, value: ${value}`);
-    console.log(this.state);
   };
 
   render() {
@@ -210,6 +207,7 @@ class ConfigTabs extends Component<Props, State> {
           >
             {ItemConfigs.map((itemConfig: any) => (
               <Tab
+                key={ItemConfigs.indexOf(itemConfig)}
                 label={`${itemConfig.displayName}s`}
                 icon={ItemConfigIcons[itemConfig.iconName]}
               />

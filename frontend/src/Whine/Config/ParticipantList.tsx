@@ -56,20 +56,19 @@ class SetPane extends Component<Props, State> {
     return sets_participants
       .filter((set_participant: any) => set_participant.set_id === set_id)
       .map((set_participant: any) => (
-        <Fragment>
-          <Grid item xs={10}>
-            <Typography
-              className={classes.typography}
-              key={set_participant._id}
-            >
+        <Fragment key={set_participant._id}>
+          <Grid item xs={1} />
+          <Grid item xs={9}>
+            <Typography className={classes.typography}>
               {[
                 participants.find(
                   (participant: any) =>
                     participant._id === set_participant.participant_id
                 )
-              ].map(
-                participant =>
-                  `${participant.firstName} ${participant.lastName}`
+              ].map(participant =>
+                participant
+                  ? `${participant.firstName} ${participant.lastName}`
+                  : null
               )}
             </Typography>
           </Grid>

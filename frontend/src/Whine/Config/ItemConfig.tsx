@@ -25,7 +25,7 @@ class ItemConfig extends Component<Props, State> {
 
   render() {
     return (
-      <div>
+      <div key="ItemConfig">
         <ConfigAppBar
           history={this.props.history}
           open={this.state.open}

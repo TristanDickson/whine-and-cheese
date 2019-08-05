@@ -94,7 +94,8 @@ class SubjectSelect extends Component<Props, State> {
 
     return (
       <Grid container>
-        <Grid item xs={10}>
+        <Grid item xs={1} />
+        <Grid item xs={9}>
           <Select
             className={classes.select}
             styles={{

@@ -75,7 +75,7 @@ const addRoutes = (app: Application, db: Db) => {
       .aggregate([
         {
           $lookup: {
-            from: "scores",
+            from: "answers",
             let: { subject_id: "$_id" },
             pipeline: [
               {
@@ -88,7 +88,7 @@ const addRoutes = (app: Application, db: Db) => {
                   _id: {
                     question_id: "$question_id"
                   },
-                  avg_score: { $avg: "$score" }
+                  avg_score: { $avg: "$answer" }
                 }
               },
               {
@@ -110,36 +110,7 @@ const addRoutes = (app: Application, db: Db) => {
                 $sort: { "question._id": 1 }
               }
             ],
-            as: "scores"
-          }
-        },
-        {
-          $lookup: {
-            from: "comments",
-            let: { subject_id: "$_id" },
-            pipeline: [
-              {
-                $match: {
-                  $expr: { $eq: ["$subject_id", "$$subject_id"] }
-                }
-              },
-              {
-                $lookup: {
-                  from: "participants",
-                  localField: "participant_id",
-                  foreignField: "_id",
-                  as: "participant"
-                }
-              },
-              {
-                $project: {
-                  _id: 0,
-                  participant: { $arrayElemAt: ["$participant", 0] },
-                  comment: "$comment"
-                }
-              }
-            ],
-            as: "comments"
+            as: "answers"
           }
         }
       ])
@@ -150,7 +121,7 @@ const addRoutes = (app: Application, db: Db) => {
   });
 
   app.get("/api/subject_average_scores", (req, res) => {
-    db.collection("scores")
+    db.collection("answers")
       .aggregate([
         {
           $lookup: {

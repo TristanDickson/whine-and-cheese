@@ -46,7 +46,7 @@ export default (app: Application, db: Db) => {
           participant_id: participant.insertedId,
           subject_id: subject._id,
           question_id: question._id,
-          answer: ""
+          value: ""
         });
       });
     });
@@ -129,38 +129,15 @@ export default (app: Application, db: Db) => {
         },
         { $sort: { "question._id": 1 } },
         {
-          $lookup: {
-            from: "comments",
-            let: {
-              participant_id: "$participant_id",
-              subject_id: "$subject_id"
-            },
-            pipeline: [
-              {
-                $match: {
-                  $expr: {
-                    $and: [
-                      { $eq: ["$participant_id", "$$participant_id"] },
-                      { $eq: ["$subject_id", "$$subject_id"] }
-                    ]
-                  }
-                }
-              }
-            ],
-            as: "comment"
-          }
-        },
-        {
           $group: {
             _id: {
-              subject: { $arrayElemAt: ["$subject", 0] },
-              comment: { $arrayElemAt: ["$comment", 0] }
+              subject: { $arrayElemAt: ["$subject", 0] }
             },
-            scores: {
+            answers: {
               $push: {
                 _id: "$_id",
                 question: { $arrayElemAt: ["$question", 0] },
-                value: "$score"
+                value: "$value"
               }
             }
           }
@@ -169,8 +146,7 @@ export default (app: Application, db: Db) => {
           $project: {
             _id: 0,
             subject: "$_id.subject",
-            comment: "$_id.comment",
-            scores: "$scores"
+            answers: "$answers"
           }
         }
       ])
