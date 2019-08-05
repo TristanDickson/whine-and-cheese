@@ -60,7 +60,7 @@ export const fetchSetsEpic = (action$: any) =>
   action$.pipe(
     ofType(FETCH_SETS),
     mergeMap(() =>
-      ajax.getJSON(`http://localhost:5000/api/metrics`).pipe(
+      ajax.getJSON(`http://localhost:5000/api/sets`).pipe(
         map(response => fetchSetsSuccess(response)),
         catchError(error =>
           of({

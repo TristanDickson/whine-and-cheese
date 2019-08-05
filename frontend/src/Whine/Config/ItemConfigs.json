@@ -1,0 +1,102 @@
+[
+  {
+    "resourceName": "api/participants",
+    "displayName": "Participant",
+    "iconName": "participant",
+    "fields": [
+      {
+        "type": "text",
+        "keyName": true,
+        "fieldName": "firstName",
+        "elementId": "first-name",
+        "displayName": "First Name"
+      },
+      {
+        "type": "text",
+        "keyName": true,
+        "fieldName": "lastName",
+        "elementId": "last-name",
+        "displayName": "Last Name"
+      },
+      {
+        "type": "text",
+        "fieldName": "age",
+        "elementId": "age",
+        "displayName": "Age"
+      }
+    ]
+  },
+  {
+    "resourceName": "api/subjects",
+    "displayName": "Wine",
+    "iconName": "subject",
+    "fields": [
+      {
+        "type": "text",
+        "keyName": true,
+        "fieldName": "name",
+        "elementId": "name",
+        "displayName": "Name"
+      },
+      {
+        "type": "text",
+        "fieldName": "label",
+        "elementId": "label",
+        "displayName": "Label"
+      },
+      {
+        "type": "text",
+        "fieldName": "colour",
+        "elementId": "colour",
+        "displayName": "Colour"
+      }
+    ]
+  },
+  {
+    "resourceName": "api/questions",
+    "displayName": "Question",
+    "iconName": "question",
+    "fields": [
+      {
+        "type": "dropdown",
+        "fieldName": "type",
+        "elementId": "type",
+        "displayName": "Type",
+        "options": ["slider", "textbox"]
+      },
+      {
+        "type": "text",
+        "keyName": true,
+        "fieldName": "name",
+        "elementId": "name",
+        "displayName": "Name"
+      },
+      {
+        "type": "text",
+        "fieldName": "description",
+        "elementId": "description",
+        "displayName": "Description"
+      }
+    ]
+  },
+  {
+    "resourceName": "api/sets",
+    "displayName": "Set",
+    "iconName": "set",
+    "fields": [
+      {
+        "type": "text",
+        "keyName": true,
+        "fieldName": "name",
+        "elementId": "name",
+        "displayName": "Name"
+      },
+      {
+        "type": "text",
+        "fieldName": "description",
+        "elementId": "description",
+        "displayName": "Description"
+      }
+    ]
+  }
+]

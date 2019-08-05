@@ -9,22 +9,34 @@ export default function withAuth(ComponentToProtect) {
         loading: true,
         redirect: false
       };
+
+      this._isMounted = false;
     }
 
     componentDidMount() {
-      fetch(`${process.env.REACT_APP_BACKEND_URL}/api/checkToken`, { credentials: "include" })
+      this._isMounted = true;
+
+      fetch(`${process.env.REACT_APP_BACKEND_URL}/api/checkToken`, {
+        credentials: "include"
+      })
         .then(res => {
-          if (res.status === 200) {
-            this.setState({ loading: false });
-          } else {
-            const error = new Error(res.error);
-            throw error;
+          if (this._isMounted) {
+            if (res.status === 200) {
+              this.setState({ loading: false });
+            } else {
+              const error = new Error(res.error);
+              throw error;
+            }
           }
         })
         .catch(err => {
           console.error(err);
           this.setState({ loading: false, redirect: true });
         });
+    }
+
+    componentWillUnmount() {
+      this._isMounted = false;
     }
 
     render() {

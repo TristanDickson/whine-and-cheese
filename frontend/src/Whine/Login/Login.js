@@ -73,7 +73,7 @@ class Login extends Component {
       .then(res => {
         if (res.status === 200) {
           console.log("User logged in");
-          this.props.history.push("/config");
+          this.props.history.push("/item_config");
         } else {
           const error = new Error(res.error);
           throw error;

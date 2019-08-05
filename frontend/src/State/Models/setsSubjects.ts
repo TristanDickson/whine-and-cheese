@@ -10,13 +10,14 @@ export const ADD_SUBJECT_TO_SET = "ADD_SUBJECT_TO_SET";
 export const ADD_SUBJECT_TO_SET_SUCCESS = "ADD_SUBJECT_TO_SET_SUCCESS";
 export const ADD_SUBJECT_TO_SET_FAILURE = "ADD_SUBJECT_TO_SET_FAILURE";
 export const REMOVE_SUBJECT_FROM_SET = "REMOVE_SUBJECT_FROM_SET";
-export const REMOVE_SUBJECT_FROM_SET_SUCCESS = "REMOVE_SUBJECT_FROM_SET_SUCCESS";
-export const REMOVE_SUBJECT_FROM_SET_FAILURE = "REMOVE_SUBJECT_FROM_SET_FAILURE";
+export const REMOVE_SUBJECT_FROM_SET_SUCCESS =
+  "REMOVE_SUBJECT_FROM_SET_SUCCESS";
+export const REMOVE_SUBJECT_FROM_SET_FAILURE =
+  "REMOVE_SUBJECT_FROM_SET_FAILURE";
 
 // ACTIONS
-export const fetchSetsSubjects = (set_id: any) => ({
-  type: FETCH_SETS_SUBJECTS,
-  set_id: set_id
+export const fetchSetsSubjects = () => ({
+  type: FETCH_SETS_SUBJECTS
 });
 
 export const fetchSetsSubjectsSuccess = (set_subjects: any) => ({

@@ -1,10 +1,27 @@
 export {
   fetchParticipants,
   fetchParticipantsSuccess,
-  fetchParticipantsFailure
+  fetchParticipantsFailure,
+  addParticipant,
+  addParticipantSuccess,
+  addParticipantFailure,
+  updateParticipant,
+  updateParticipantSuccess,
+  updateParticipantFailure,
+  deleteParticipant,
+  deleteParticipantSuccess,
+  deleteParticipantFailure
 } from "./Models/participants";
-export { fetchSubjects, fetchSubjectsSuccess, fetchSubjectsFailure } from "./Models/subjects";
-export { fetchQuestions, fetchQuestionsSuccess, fetchQuestionsFailure } from "./Models/questions";
+export {
+  fetchSubjects,
+  fetchSubjectsSuccess,
+  fetchSubjectsFailure
+} from "./Models/subjects";
+export {
+  fetchQuestions,
+  fetchQuestionsSuccess,
+  fetchQuestionsFailure
+} from "./Models/questions";
 export { fetchSets, fetchSetsSuccess, fetchSetsFailure } from "./Models/sets";
 export {
   fetchSetsParticipants,
@@ -23,7 +40,10 @@ export {
   fetchSetsSubjectsFailure,
   addSubjectToSet,
   addSubjectToSetSuccess,
-  addSubjectToSetFailure
+  addSubjectToSetFailure,
+  removeSubjectFromSet,
+  removeSubjectFromSetSuccess,
+  removeSubjectFromSetFailure
 } from "./Models/setsSubjects";
 export {
   fetchSetsQuestions,
@@ -31,5 +51,8 @@ export {
   fetchSetsQuestionsFailure,
   addQuestionToSet,
   addQuestionToSetSuccess,
-  addQuestionToSetFailure
+  addQuestionToSetFailure,
+  removeQuestionFromSet,
+  removeQuestionFromSetSuccess,
+  removeQuestionFromSetFailure
 } from "./Models/setsQuestions";

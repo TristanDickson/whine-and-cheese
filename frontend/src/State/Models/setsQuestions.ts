@@ -10,13 +10,14 @@ export const ADD_QUESTION_TO_SET = "ADD_QUESTION_TO_SET";
 export const ADD_QUESTION_TO_SET_SUCCESS = "ADD_QUESTION_TO_SET_SUCCESS";
 export const ADD_QUESTION_TO_SET_FAILURE = "ADD_QUESTION_TO_SET_FAILURE";
 export const REMOVE_QUESTION_FROM_SET = "REMOVE_QUESTION_FROM_SET";
-export const REMOVE_QUESTION_FROM_SET_SUCCESS = "REMOVE_QUESTION_FROM_SET_SUCCESS";
-export const REMOVE_QUESTION_FROM_SET_FAILURE = "REMOVE_QUESTION_FROM_SET_FAILURE";
+export const REMOVE_QUESTION_FROM_SET_SUCCESS =
+  "REMOVE_QUESTION_FROM_SET_SUCCESS";
+export const REMOVE_QUESTION_FROM_SET_FAILURE =
+  "REMOVE_QUESTION_FROM_SET_FAILURE";
 
 // ACTIONS
-export const fetchSetsQuestions = (set_id: any) => ({
-  type: FETCH_SETS_QUESTIONS,
-  set_id: set_id
+export const fetchSetsQuestions = () => ({
+  type: FETCH_SETS_QUESTIONS
 });
 
 export const fetchSetsQuestionsSuccess = (set_questions: any) => ({
@@ -29,7 +30,18 @@ export const fetchSetsQuestionsFailure = (message: any) => ({
   payload: message
 });
 
-export const addQuestionToSet = (set_id: string, question_id: string) => {
+export interface addQuestionToSet {
+  type: typeof ADD_QUESTION_TO_SET;
+  payload: {
+    set_id: string;
+    question_id: string;
+  };
+}
+
+export const addQuestionToSet = (
+  set_id: string,
+  question_id: string
+): addQuestionToSet => {
   return {
     type: ADD_QUESTION_TO_SET,
     payload: { set_id: set_id, question_id: question_id }
