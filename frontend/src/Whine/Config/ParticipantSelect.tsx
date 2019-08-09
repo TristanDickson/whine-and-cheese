@@ -1,12 +1,11 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { Grid, Fab, FormHelperText } from "@material-ui/core";
+import { Grid, Fab } from "@material-ui/core";
 import { withStyles, createStyles, WithStyles } from "@material-ui/core/styles";
 import { Add as AddIcon } from "@material-ui/icons";
 import Select from "react-select";
 
 import { addParticipantToSet } from "../../State/actions";
-
 import ParticipantList from "./ParticipantList";
 
 const styles = (theme: any) =>
@@ -24,60 +23,92 @@ const styles = (theme: any) =>
     }
   });
 
-interface Props extends WithStyles<typeof styles> {
-  set_id: string;
-  participants?: any;
-  sets_participants?: any;
-  addParticipantToSet?: any;
+interface StateProps {
+  participants: any;
+  sets_participants: any;
 }
 
+interface DispatchProps {
+  addParticipantToSet: any;
+}
+
+type Props = WithStyles<typeof styles> &
+  StateProps &
+  DispatchProps & {
+    set_id: string;
+  };
+
 interface State {
-  validInput: boolean;
-  selected_participant_id: string;
+  options: any;
+  selectedOption: any;
 }
 
 class ParticipantSelect extends Component<Props, State> {
-  addParticipantToSet: any;
-
   constructor(props: Props) {
     super(props);
-    this.addParticipantToSet = props.addParticipantToSet;
     this.state = {
-      selected_participant_id: "",
-      validInput: true
+      options: this.validParticipants(),
+      selectedOption: 0
     };
   }
 
-  changeParticipant(event: any) {
-    if (event) {
+  validParticipants() {
+    let set_id = this.props.set_id;
+    let participants = this.props.participants.participants;
+    let sets_participants = this.props.sets_participants.sets_participants;
+
+    return participants.filter(
+      (participant: any) =>
+        !sets_participants
+          .filter((set_participant: any) => {
+            return set_participant.set_id === set_id;
+          })
+          .map((set_participant: any) => {
+            return set_participant.participant_id;
+          })
+          .includes(participant._id)
+    );
+  }
+
+  componentDidUpdate(prevProps: Props) {
+    if (this.props.sets_participants !== prevProps.sets_participants) {
       this.setState({
-        selected_participant_id: event.value,
-        validInput: true
-      });
-    } else {
-      this.setState({
-        selected_participant_id: ""
+        options: this.validParticipants(),
+        selectedOption: 0
       });
     }
   }
 
-  addToSet(set_id: string, participant_id: string) {
-    if (participant_id !== "") {
-      this.setState({ validInput: true });
-      this.addParticipantToSet(set_id, participant_id);
+  changeParticipant(event: any) {
+    if (event) {
+      this.setState({ selectedOption: event.value });
     } else {
-      this.setState({ validInput: false });
+      this.setState({ selectedOption: null });
+    }
+  }
+
+  addToSet() {
+    if (this.state.options.length > 0) {
+      let set_id = this.props.set_id;
+      let participant_id = this.state.options[this.state.selectedOption]._id;
+
+      console.log(
+        `Adding participant to set: set_id:${set_id} participant_id:${participant_id}`
+      );
+      this.props.addParticipantToSet(set_id, participant_id);
     }
   }
 
   render() {
     const { classes } = this.props;
 
-    let participants = this.props.participants.participants;
-    let sets_participants = this.props.sets_participants.sets_participants;
-
     let set_id = this.props.set_id;
-    let selected_participant_id = this.state.selected_participant_id;
+
+    let options = this.state.options.map((option: any) => ({
+      value: this.state.options.indexOf(option),
+      label: `${option.firstName} ${option.lastName}`
+    }));
+    let value = options[this.state.selectedOption];
 
     return (
       <Grid container>
@@ -85,41 +116,11 @@ class ParticipantSelect extends Component<Props, State> {
         <Grid item xs={9}>
           <Select
             className={classes.select}
-            styles={{
-              control: (base, state) =>
-                !state.isFocused && !this.state.validInput
-                  ? {
-                      ...base,
-                      border: "1px solid red"
-                    }
-                  : { ...base }
-            }}
-            options={participants
-              .filter(
-                (participant: any) =>
-                  !sets_participants
-                    .filter((set_participant: any) => {
-                      return set_participant.set_id === set_id;
-                    })
-                    .map((set_participant: any) => {
-                      return set_participant.participant_id;
-                    })
-                    .includes(participant._id)
-              )
-              .map((participant: any) => ({
-                value: participant._id,
-                label: `${participant.firstName} ${participant.lastName}`
-              }))}
+            value={value}
+            options={options}
             onChange={(event: any) => this.changeParticipant(event)}
             isClearable={true}
           />
-          {!this.state.validInput ? (
-            <FormHelperText className={classes.errorMessage}>
-              Error: Please select a participant
-            </FormHelperText>
-          ) : (
-            ""
-          )}
         </Grid>
         <Grid item xs={2}>
           <Fab
@@ -127,7 +128,7 @@ class ParticipantSelect extends Component<Props, State> {
             color="primary"
             aria-label="Add"
             className={classes.fab}
-            onClick={() => this.addToSet(set_id, selected_participant_id)}
+            onClick={() => this.addToSet()}
           >
             <AddIcon />
           </Fab>
@@ -138,9 +139,12 @@ class ParticipantSelect extends Component<Props, State> {
   }
 }
 
-const mapStateToProps = (state: any) => ({ ...state });
+const mapStateToProps = (state: any): StateProps => {
+  const { participants, sets_participants } = state;
+  return { participants, sets_participants };
+};
 
-const mapDispatchToProps = { addParticipantToSet };
+const mapDispatchToProps: DispatchProps = { addParticipantToSet };
 
 export default connect(
   mapStateToProps,

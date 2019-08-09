@@ -1,7 +1,5 @@
 import { withStyles, createStyles, WithStyles } from "@material-ui/core/styles";
 import React, { Component } from "react";
-import ParticipantSelect from "./ParticipantSelect";
-import ItemConfigs from "./ItemConfigs.json";
 
 import { connect } from "react-redux";
 import {
@@ -15,6 +13,9 @@ import {
   FilledInput,
   Typography
 } from "@material-ui/core";
+
+import ItemConfigs from "./ItemConfigs.json";
+import ParticipantSelect from "./ParticipantSelect";
 import SubjectSelect from "./SubjectSelect";
 import QuestionSelect from "./QuestionSelect";
 import { ItemConfigIcons } from "./ItemConfigIcons";
@@ -38,13 +39,17 @@ const styles = (theme: any) =>
     }
   });
 
-interface Props extends WithStyles<typeof styles> {
+interface StateProps {
   sets: any;
 }
 
+type Props = WithStyles<typeof styles> &
+  StateProps & {
+    set_id: string;
+  };
+
 interface State {
   value: number;
-  sets: any;
   selectedId: string;
 }
 
@@ -53,10 +58,27 @@ class ConfigTabs extends Component<Props, State> {
     super(props);
     this.state = {
       value: 0,
-      sets: [],
       selectedId: ""
     };
   }
+
+  componentDidMount = () => {
+    let selectedId = this.state.selectedId;
+    let sets = this.props.sets.sets;
+
+    if (sets.length > 0 && selectedId === "") {
+      this.setState({ selectedId: sets[0]._id });
+    }
+  };
+
+  componentDidUpdate = () => {
+    let selectedId = this.state.selectedId;
+    let sets = this.props.sets.sets;
+
+    if (sets.length > 0 && selectedId === "") {
+      this.setState({ selectedId: sets[0]._id });
+    }
+  };
 
   handleChangeTab = async (event: any, value: number) => {
     await this.setState({ value: value });
@@ -119,6 +141,9 @@ class ConfigTabs extends Component<Props, State> {
   }
 }
 
-const mapStateToProps = (state: any) => ({ ...state });
+const mapStateToProps = (state: any): StateProps => {
+  const { sets } = state;
+  return { sets };
+};
 
 export default connect(mapStateToProps)(withStyles(styles)(ConfigTabs));

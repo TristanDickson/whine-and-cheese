@@ -40,7 +40,7 @@ const styles = (theme: Theme) =>
   });
 
 interface Props extends WithStyles<typeof styles> {
-  participant: any;
+  set_participant: any;
 }
 
 interface State {
@@ -55,20 +55,19 @@ class RateStepper extends Component<Props, State> {
   }
 
   async componentDidMount() {
-    await this.getParticipantData(this.props.participant);
+    await this.getParticipantData(this.props.set_participant);
   }
 
-  getParticipantData = async (participant: any) => {
+  getParticipantData = async (set_participant: any) => {
     await fetch(
-      `${process.env.REACT_APP_BACKEND_URL}/api/participant_data?id=${
-        participant._id
-      }`
+      `${process.env.REACT_APP_BACKEND_URL}/api/participant_data?set_id=${
+        set_participant.set_id
+      }&participant_id=${set_participant.participant_id}`
     )
       .then(response => {
         return response.json();
       })
       .then(subjects => {
-        console.log(subjects);
         this.setState({ subjects: [...subjects] });
       });
   };
@@ -137,7 +136,7 @@ class RateStepper extends Component<Props, State> {
   render() {
     const { classes } = this.props;
     const { activeStep } = this.state;
-    const participantName = this.props.participant.firstName;
+    const participantName = this.props.set_participant.participant.firstName;
     const subjects = this.state.subjects;
 
     return (
@@ -157,7 +156,7 @@ class RateStepper extends Component<Props, State> {
             })}
           </Stepper>
           <RateQuestions
-            key="RateSliders1"
+            key="RateQuestions1"
             participantName={participantName}
             subject={subjects[activeStep - 1]}
             start={activeStep === 0}

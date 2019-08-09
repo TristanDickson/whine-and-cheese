@@ -1,6 +1,13 @@
-import { ObjectID, Db } from "mongodb";
+import {
+  ObjectID,
+  Db,
+  InsertOneWriteOpResult,
+  FindAndModifyWriteOpResultObject,
+  MongoError,
+  DeleteWriteOpResultObject
+} from "mongodb";
 
-export const getFromCollection = async (
+export const findInCollection = async (
   db: Db,
   collection: string,
   filter = {}
@@ -23,7 +30,7 @@ export const addToCollection = async (
   console.log(
     `Inserting document: ${JSON.stringify(document)} into ${collection}`
   );
-  return new Promise((resolve, reject) => {
+  return new Promise<InsertOneWriteOpResult>((resolve, reject) => {
     db.collection(collection).insertOne(document, (err, result) => {
       if (err) reject(err);
       resolve(result);
@@ -41,20 +48,22 @@ export const updateInCollection = async (
   console.log(
     `Updating ${collection} with id: ${_id}, setting key ${key} to value ${value}`
   );
-  return new Promise((resolve, reject) => {
-    db.collection(collection).findOneAndUpdate(
-      { _id: new ObjectID(_id) },
-      {
-        $set: {
-          [key]: value
+  return new Promise<FindAndModifyWriteOpResultObject>(
+    (resolve, reject) => {
+      db.collection(collection).findOneAndUpdate(
+        { _id: new ObjectID(_id) },
+        {
+          $set: {
+            [key]: value
+          }
+        },
+        (err, result) => {
+          if (err) reject(err);
+          resolve(result);
         }
-      },
-      (err, result) => {
-        if (err) reject(err);
-        resolve(result);
-      }
-    );
-  });
+      );
+    }
+  );
 };
 
 export const removeFromCollection = async (
@@ -65,19 +74,21 @@ export const removeFromCollection = async (
   console.log(
     `Deleting from ${collection} using filter ${JSON.stringify(filter)}`
   );
-  return new Promise((resolve, reject) => {
-    db.collection(collection).deleteMany(filter, (err, result) => {
-      if (err) reject(err);
-      if (result) {
-        console.log(`Deleted ${result.deletedCount} records`);
-      }
-      resolve(result);
-    });
-  });
+  return new Promise<DeleteWriteOpResultObject>(
+    (resolve, reject) => {
+      db.collection(collection).deleteMany(filter, (err, result) => {
+        if (err) reject(err);
+        if (result) {
+          console.log(`Deleted ${result.deletedCount} records`);
+        }
+        resolve(result);
+      });
+    }
+  );
 };
 
 export const generateUserCode = () => {
-  let code = "";
+  let code: string = "";
   for (let i = 0; i < 4; i++) {
     code = `${code}${String.fromCharCode(Math.floor(Math.random() * 26) + 65)}`;
   }

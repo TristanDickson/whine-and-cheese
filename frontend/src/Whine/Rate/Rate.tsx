@@ -21,7 +21,7 @@ interface Props {
 interface State {
   loading: boolean;
   redirect: boolean;
-  participant: any;
+  set_participant: any;
 }
 
 class Rate extends Component<Props, State> {
@@ -30,7 +30,7 @@ class Rate extends Component<Props, State> {
     this.state = {
       loading: true,
       redirect: false,
-      participant: null
+      set_participant: null
     };
   }
 
@@ -44,8 +44,8 @@ class Rate extends Component<Props, State> {
           return response.json();
         }
       })
-      .then(participant => {
-        this.setState({ loading: false, participant: participant });
+      .then(set_participant => {
+        this.setState({ loading: false, set_participant: set_participant });
       })
       .catch(error => {
         console.log(error);
@@ -74,8 +74,8 @@ class Rate extends Component<Props, State> {
           <Grid item xs={false} md={1} />
           <Grid item xs={12} md={10}>
             <Banner image={banner} />
-            {this.state.participant ? (
-              <RateStepper participant={this.state.participant} />
+            {this.state.set_participant ? (
+              <RateStepper set_participant={this.state.set_participant} />
             ) : null}
           </Grid>
           <Grid item xs={false} md={1} />

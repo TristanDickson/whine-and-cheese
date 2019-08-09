@@ -3,7 +3,7 @@ import { Application } from "express";
 import {
   generateUserCode,
   addToCollection,
-  getFromCollection,
+  findInCollection,
   removeFromCollection
 } from "../helperFunctions";
 
@@ -38,8 +38,8 @@ export default (app: Application, db: Db) => {
     }
     req.body.code = participantCode;
     let participant: any = await addToCollection(db, "participants", req.body);
-    let subjects: any = await getFromCollection(db, "subjects");
-    let questions: any = await getFromCollection(db, "questions");
+    let subjects: any = await findInCollection(db, "subjects");
+    let questions: any = await findInCollection(db, "questions");
     subjects.forEach((subject: any) => {
       questions.forEach((question: any) => {
         addToCollection(db, "answers", {
@@ -85,8 +85,23 @@ export default (app: Application, db: Db) => {
 
   app.get("/api/checkCode", function(req, res) {
     console.log(`Searching for user with code ${req.query.code}`);
-    db.collection("participants")
-      .find({ code: req.query.code })
+    db.collection("sets_participants")
+      .aggregate([
+        {
+          $match: {
+            code: req.query.code
+          }
+        },
+        {
+          $lookup: {
+            from: "participants",
+            localField: "participant_id",
+            foreignField: "_id",
+            as: "participant"
+          }
+        },
+        { $unwind: "$participant" }
+      ])
       .toArray((err, result) => {
         if (err) {
           console.error(err);
@@ -101,59 +116,6 @@ export default (app: Application, db: Db) => {
           console.log(`found user ${JSON.stringify(result[0])}`);
           res.status(200).send(result[0]);
         }
-      });
-  });
-
-  app.get("/api/participant_data", (req, res) => {
-    console.log(
-      `Getting participant data for participant with id: ${req.query.id}`
-    );
-    db.collection("answers")
-      .aggregate([
-        { $match: { participant_id: new ObjectID(req.query.id) } },
-        {
-          $lookup: {
-            from: "subjects",
-            localField: "subject_id",
-            foreignField: "_id",
-            as: "subject"
-          }
-        },
-        {
-          $lookup: {
-            from: "questions",
-            localField: "question_id",
-            foreignField: "_id",
-            as: "question"
-          }
-        },
-        { $sort: { "question._id": 1 } },
-        {
-          $group: {
-            _id: {
-              subject: { $arrayElemAt: ["$subject", 0] }
-            },
-            answers: {
-              $push: {
-                _id: "$_id",
-                question: { $arrayElemAt: ["$question", 0] },
-                value: "$value"
-              }
-            }
-          }
-        },
-        {
-          $project: {
-            _id: 0,
-            subject: "$_id.subject",
-            answers: "$answers"
-          }
-        }
-      ])
-      .toArray((err, result) => {
-        if (err) return console.log(err);
-        console.log(result);
-        res.send(result);
       });
   });
 };

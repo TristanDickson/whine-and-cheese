@@ -49,10 +49,18 @@ export const addParticipantToSetFailure = (message: any) => ({
   payload: message
 });
 
-export const removeParticipantFromSet = (set_participant_id: string) => {
+export const removeParticipantFromSet = (
+  set_participant_id: string,
+  set_id: string,
+  participant_id: string
+) => {
   return {
     type: REMOVE_PARTICIPANT_FROM_SET,
-    payload: { set_participant_id: set_participant_id }
+    payload: {
+      set_participant_id: set_participant_id,
+      set_id: set_id,
+      participant_id: participant_id
+    }
   };
 };
 
@@ -191,7 +199,9 @@ export const removeParticipantFromSetEpic = (action$: any) =>
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          id: action.payload.set_participant_id
+          id: action.payload.set_participant_id,
+          set_id: action.payload.set_id,
+          participant_id: action.payload.participant_id
         })
       }).pipe(
         map(result => removeParticipantFromSetSuccess(result.response)),

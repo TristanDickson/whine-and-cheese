@@ -74,7 +74,7 @@ class SubjectList extends Component<Props, State> {
           <Grid item xs={2}>
             <Fab
               size="small"
-              color="primary"
+              color="secondary"
               aria-label="Add"
               className={classes.fab}
               onClick={() => this.removeFromSet(set_question._id)}

@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import Select from "react-select";
 import { connect } from "react-redux";
 import { withStyles, createStyles, WithStyles } from "@material-ui/core/styles";
-import { Grid, Fab, FormHelperText } from "@material-ui/core";
+import { Grid, Fab } from "@material-ui/core";
 import AddIcon from "@material-ui/icons/Add";
 
 import { addSubjectToSet } from "../../State/actions";
@@ -23,63 +23,92 @@ const styles = (theme: any) =>
     }
   });
 
-interface Props extends WithStyles<typeof styles> {
-  set_id: string;
-  subjects?: any;
-  sets_subjects?: any;
-  addSubjectToSet?: any;
+interface StateProps {
+  subjects: any;
+  sets_subjects: any;
 }
 
+interface DispatchProps {
+  addSubjectToSet: any;
+}
+
+type Props = WithStyles<typeof styles> &
+  StateProps &
+  DispatchProps & {
+    set_id: string;
+  };
+
 interface State {
-  validInput: boolean;
-  selected_subject_id: string;
+  options: any;
+  selectedOption: any;
 }
 
 class SubjectSelect extends Component<Props, State> {
-  addSubjectToSet: any;
-
   constructor(props: Props) {
     super(props);
-    this.addSubjectToSet = props.addSubjectToSet;
     this.state = {
-      selected_subject_id: "",
-      validInput: true
+      options: this.validSubjects(),
+      selectedOption: 0
     };
   }
 
-  changeSubject(event: any) {
-    if (event) {
+  validSubjects() {
+    let set_id = this.props.set_id;
+    let subjects = this.props.subjects.subjects;
+    let sets_subjects = this.props.sets_subjects.sets_subjects;
+
+    return subjects.filter(
+      (subject: any) =>
+        !sets_subjects
+          .filter((set_subject: any) => {
+            return set_subject.set_id === set_id;
+          })
+          .map((set_subject: any) => {
+            return set_subject.subject_id;
+          })
+          .includes(subject._id)
+    );
+  }
+
+  componentDidUpdate(prevProps: Props) {
+    if (this.props.sets_subjects !== prevProps.sets_subjects) {
       this.setState({
-        selected_subject_id: event.value,
-        validInput: true
-      });
-    } else {
-      this.setState({
-        selected_subject_id: ""
+        options: this.validSubjects(),
+        selectedOption: 0
       });
     }
   }
 
-  addToSet(set_id: string, subject_id: string) {
-    if (subject_id !== "") {
-      this.setState({ validInput: true });
-      this.addSubjectToSet(set_id, subject_id);
+  changeSubject(event: any) {
+    if (event) {
+      this.setState({ selectedOption: event.value });
+    } else {
+      this.setState({ selectedOption: null });
+    }
+  }
+
+  addToSet() {
+    if (this.state.options.length > 0) {
+      let set_id = this.props.set_id;
+      let subject_id = this.state.options[this.state.selectedOption]._id;
+
       console.log(
         `Adding subject to set: set_id:${set_id} subject_id:${subject_id}`
       );
-    } else {
-      this.setState({ validInput: false });
+      this.props.addSubjectToSet(set_id, subject_id);
     }
   }
 
   render() {
     const { classes } = this.props;
 
-    let subjects = this.props.subjects.subjects;
-    let sets_subjects = this.props.sets_subjects.sets_subjects;
-
     let set_id = this.props.set_id;
-    let selected_subject_id = this.state.selected_subject_id;
+
+    let options = this.state.options.map((option: any) => ({
+      value: this.state.options.indexOf(option),
+      label: option.name
+    }));
+    let value = options[this.state.selectedOption];
 
     return (
       <Grid container>
@@ -87,41 +116,11 @@ class SubjectSelect extends Component<Props, State> {
         <Grid item xs={9}>
           <Select
             className={classes.select}
-            styles={{
-              control: (base, state) =>
-                !state.isFocused && !this.state.validInput
-                  ? {
-                      ...base,
-                      border: "1px solid red"
-                    }
-                  : { ...base }
-            }}
-            options={subjects
-              .filter(
-                (subject: any) =>
-                  !sets_subjects
-                    .filter((set_subject: any) => {
-                      return set_subject.set_id === set_id;
-                    })
-                    .map((set_subject: any) => {
-                      return set_subject.subject_id;
-                    })
-                    .includes(subject._id)
-              )
-              .map((subject: any) => ({
-                value: subject._id,
-                label: `${subject.name}`
-              }))}
+            value={value}
+            options={options}
             onChange={(event: any) => this.changeSubject(event)}
             isClearable={true}
           />
-          {!this.state.validInput ? (
-            <FormHelperText className={classes.errorMessage}>
-              Error: Please select a subject
-            </FormHelperText>
-          ) : (
-            ""
-          )}
         </Grid>
         <Grid item xs={2}>
           <Fab
@@ -129,7 +128,7 @@ class SubjectSelect extends Component<Props, State> {
             color="primary"
             aria-label="Add"
             className={classes.fab}
-            onClick={() => this.addToSet(set_id, selected_subject_id)}
+            onClick={() => this.addToSet()}
           >
             <AddIcon />
           </Fab>
@@ -140,9 +139,12 @@ class SubjectSelect extends Component<Props, State> {
   }
 }
 
-const mapStateToProps = (state: any) => ({ ...state });
+const mapStateToProps = (state: any): StateProps => {
+  const { subjects, sets_subjects } = state;
+  return { subjects, sets_subjects };
+};
 
-const mapDispatchToProps = { addSubjectToSet };
+const mapDispatchToProps: DispatchProps = { addSubjectToSet };
 
 export default connect(
   mapStateToProps,

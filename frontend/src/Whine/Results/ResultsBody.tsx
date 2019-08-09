@@ -9,7 +9,7 @@ import {
   withStyles,
   createStyles
 } from "@material-ui/core";
-import WineList from "./WineList";
+import SubjectList from "./SubjectList";
 import RadarChart from "./RadarChart";
 import BarChart from "./BarChart";
 
@@ -38,7 +38,7 @@ const styles = (theme: any) =>
     chart: {
       padding: "5px"
     },
-    wineList: {
+    subjectList: {
       paddingTop: 0
     },
     author: {
@@ -48,44 +48,61 @@ const styles = (theme: any) =>
 
 interface Props {
   classes: any;
+  set: any;
 }
 
 interface State {
-  metrics: any;
-  wineAvgScores: any;
-  wineData: any;
+  questions: any;
+  subjectAvgScores: any;
+  subjectData: any;
 }
 
 class ResultsBody extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    this.state = { metrics: [], wineAvgScores: [], wineData: [] };
+    this.state = { questions: [], subjectAvgScores: [], subjectData: [] };
   }
 
   async componentDidMount() {
-    let [metrics, wineAvgScores, wineData] = await Promise.all([
-      this.getMetrics(),
-      this.getWineAvgScores(),
-      this.getWineData()
+    let [questions, subjectAvgScores, subjectData] = await Promise.all([
+      this.getQuestions(),
+      this.getSubjectAvgScores(),
+      this.getSubjectData()
     ]);
     this.setState({
-      metrics: metrics,
-      wineAvgScores: wineAvgScores,
-      wineData: wineData
+      questions: questions,
+      subjectAvgScores: subjectAvgScores,
+      subjectData: subjectData
     });
   }
 
-  getMetrics = async () => {
-    console.log(`Getting metrics`);
+  async componentDidUpdate(prevProps: Props) {
+    if (prevProps !== this.props) {
+      let [questions, subjectAvgScores, subjectData] = await Promise.all([
+        this.getQuestions(),
+        this.getSubjectAvgScores(),
+        this.getSubjectData()
+      ]);
+      this.setState({
+        questions: questions,
+        subjectAvgScores: subjectAvgScores,
+        subjectData: subjectData
+      });
+    }
+  }
+
+  getQuestions = async () => {
+    console.log(`Getting questions`);
     let response = await fetch(
       `${process.env.REACT_APP_BACKEND_URL}/api/questions`
     );
-    let metrics = await response.json();
-    return metrics;
+    let questions = await response.json();
+    questions = questions.filter((question: any) => question.type === "Slider");
+    return questions;
   };
 
-  getWineAvgScores = async () => {
-    console.log(`Getting wine average scores`);
+  getSubjectAvgScores = async () => {
+    console.log(`Getting subject average scores`);
     let response = await fetch(
       `${process.env.REACT_APP_BACKEND_URL}/api/subject_average_scores`
     );
@@ -93,10 +110,12 @@ class ResultsBody extends Component<Props, State> {
     return scores;
   };
 
-  getWineData = async () => {
-    console.log(`Getting wine data`);
+  getSubjectData = async () => {
+    console.log(`Getting subject data`);
     let response = await fetch(
-      `${process.env.REACT_APP_BACKEND_URL}/api/subject_data`
+      `${process.env.REACT_APP_BACKEND_URL}/api/set_data?set_id=${
+        this.props.set._id
+      }`
     );
     let data = await response.json();
     return data;
@@ -130,12 +149,9 @@ class ResultsBody extends Component<Props, State> {
 
   render() {
     const { classes } = this.props;
-    let metrics = this.state.metrics;
-    let wines = this.state.wineData;
-    let wineAvgScores = this.state.wineAvgScores;
-
-    console.log(metrics);
-    console.log(wines);
+    let questions = this.state.questions;
+    let sets_subjects = this.state.subjectData;
+    let subjectAvgScores = this.state.subjectAvgScores;
 
     return (
       <div className={classes.layout}>
@@ -145,10 +161,12 @@ class ResultsBody extends Component<Props, State> {
               <Card className={classes.card}>
                 <CardHeader
                   className={classes.cardHeader}
-                  title="Wine Ranking"
+                  title="Subject Ranking"
                 />
-                <CardContent className={classes.wineList}>
-                  {wineAvgScores && <WineList wines={wineAvgScores} />}
+                <CardContent className={classes.subjectList}>
+                  {subjectAvgScores && (
+                    <SubjectList subjects={subjectAvgScores} />
+                  )}
                 </CardContent>
               </Card>
             </Grid>
@@ -156,33 +174,47 @@ class ResultsBody extends Component<Props, State> {
               <Card className={classes.card}>
                 <CardHeader
                   className={classes.cardHeader}
-                  title="Average Wine Scores"
+                  title="Average Subject Scores"
                 />
                 <CardContent className={classes.chart}>
-                  {metrics && wines && (
-                    <RadarChart metrics={metrics} wines={wines} />
-                  )}
+                  <RadarChart
+                    sets_subjects={sets_subjects}
+                    questions={questions}
+                  />
                 </CardContent>
               </Card>
             </Grid>
-            {wines.map((wine: any) => (
-              <Grid key={wine._id} item md={4} xs={12}>
+            {sets_subjects.map((set_subject: any) => (
+              <Grid key={set_subject._id} item md={4} xs={12}>
                 <Card className={classes.card}>
                   <CardHeader
                     className={classes.cardHeader}
-                    title={wine.name}
+                    title={set_subject.subject.name}
                   />
                   <CardContent className={classes.chart}>
                     <BarChart
-                      metrics={metrics}
-                      wines={wines.slice(
-                        [wines.indexOf(wine)],
-                        wines.indexOf(wine) + 1
+                      questions={questions}
+                      sets_subjects={sets_subjects.slice(
+                        [sets_subjects.indexOf(set_subject)],
+                        sets_subjects.indexOf(set_subject) + 1
                       )}
                     />
                   </CardContent>
                   <CardContent>
-                    {this.getRandomComment(classes, wine.comments)}
+                    {this.getRandomComment(classes, [
+                      {
+                        comment: "alpha",
+                        participant: { firstName: "Ben", lastName: "South" }
+                      },
+                      {
+                        comment: "beta",
+                        participant: { firstName: "Jerry", lastName: "West" }
+                      },
+                      {
+                        comment: "omega",
+                        participant: { firstName: "Tom", lastName: "North" }
+                      }
+                    ])}
                   </CardContent>
                 </Card>
               </Grid>

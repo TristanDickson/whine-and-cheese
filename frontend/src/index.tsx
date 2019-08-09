@@ -9,7 +9,7 @@ import { rootReducer } from "./State/reducers";
 import App from "./App";
 
 const epicMiddleware = createEpicMiddleware();
-const store = createStore(rootReducer, applyMiddleware(epicMiddleware));
+const store: any = createStore(rootReducer, applyMiddleware(epicMiddleware));
 epicMiddleware.run(rootEpic);
 
 const Root = () => {

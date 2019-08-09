@@ -25,7 +25,7 @@ const styles = (theme: any) =>
     }
   });
 
-let getWineRankingIcon = (ranking: any) => {
+let getSubjectRankingIcon = (ranking: any) => {
   let icons = [
     <FilterOneIcon />,
     <FilterTwoIcon />,
@@ -36,32 +36,32 @@ let getWineRankingIcon = (ranking: any) => {
   return icons[ranking];
 };
 
-let buildWineList = (wines: any) => {
-  let wineList = [];
-  for (let index = 0; index < wines.length; index++) {
-    const wine = wines[index];
-    wineList.push(
-      <ListItem key={wines.indexOf(wine)}>
-        <Avatar>{getWineRankingIcon(wines.indexOf(wine))}</Avatar>
-        <ListItemText primary={wine.name} secondary={wine.label} />
+let buildSubjectList = (subjects: any) => {
+  let subjectList = [];
+  for (let index = 0; index < subjects.length; index++) {
+    const subject = subjects[index];
+    subjectList.push(
+      <ListItem key={subjects.indexOf(subject)}>
+        <Avatar>{getSubjectRankingIcon(subjects.indexOf(subject))}</Avatar>
+        <ListItemText primary={subject.name} secondary={subject.label} />
       </ListItem>
     );
   }
-  return wineList;
+  return subjectList;
 };
 
 interface Props {
   classes: any;
-  wines: any;
+  subjects: any;
 }
 
-function WineList(props: Props) {
+function SubjectList(props: Props) {
   const { classes } = props;
-  return <List className={classes.root}>{buildWineList(props.wines)}</List>;
+  return <List className={classes.root}>{buildSubjectList(props.subjects)}</List>;
 }
 
-WineList.propTypes = {
+SubjectList.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
-export default withStyles(styles)(WineList);
+export default withStyles(styles)(SubjectList);

@@ -2,7 +2,7 @@ import { ObjectID, Db } from "mongodb";
 import { Application } from "express";
 import {
   addToCollection,
-  getFromCollection,
+  findInCollection,
   removeFromCollection,
   updateInCollection
 } from "../helperFunctions";
@@ -19,7 +19,6 @@ export default (app: Application, db: Db) => {
 
   app.post("/api/answers", async (req, res) => {
     await addToCollection(db, "answers", req.body);
-    await getFromCollection(db, "answers");
     res.sendStatus(200);
   });
 
@@ -31,7 +30,7 @@ export default (app: Application, db: Db) => {
       req.body.key,
       req.body.value
     );
-    await getFromCollection(db, "answers");
+    await findInCollection(db, "answers");
     res.sendStatus(200);
   });
 
@@ -39,7 +38,7 @@ export default (app: Application, db: Db) => {
     await removeFromCollection(db, "answers", {
       _id: new ObjectID(req.body.id)
     });
-    await getFromCollection(db, "answers");
+    await findInCollection(db, "answers");
     res.sendStatus(200);
   });
 };

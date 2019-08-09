@@ -2,7 +2,7 @@ import { Application } from "express";
 import { Db } from "mongodb";
 import {
   addToCollection,
-  getFromCollection,
+  findInCollection,
   removeFromCollection
 } from "../helperFunctions";
 
@@ -20,8 +20,8 @@ const addRoutes = (app: Application, db: Db) => {
 
   app.post("/api/subjects", async (req, res) => {
     let subject: any = await addToCollection(db, "subjects", req.body);
-    let participants: any = await getFromCollection(db, "participants");
-    let questions: any = await getFromCollection(db, "questions");
+    let participants: any = await findInCollection(db, "participants");
+    let questions: any = await findInCollection(db, "questions");
     participants.forEach((participant: any) => {
       questions.forEach((question: any) => {
         db.collection("answers").insertOne({
@@ -68,57 +68,7 @@ const addRoutes = (app: Application, db: Db) => {
     });
     console.log(`Deleted subject with id: ${req.body._id}\n`);
     res.send(`"Deleted subject with id: ${req.body._id}"`);
-  });
-
-  app.get("/api/subject_data", (req, res) => {
-    db.collection("subjects")
-      .aggregate([
-        {
-          $lookup: {
-            from: "answers",
-            let: { subject_id: "$_id" },
-            pipeline: [
-              {
-                $match: {
-                  $expr: { $eq: ["$subject_id", "$$subject_id"] }
-                }
-              },
-              {
-                $group: {
-                  _id: {
-                    question_id: "$question_id"
-                  },
-                  avg_score: { $avg: "$answer" }
-                }
-              },
-              {
-                $lookup: {
-                  from: "questions",
-                  localField: "_id.question_id",
-                  foreignField: "_id",
-                  as: "question"
-                }
-              },
-              {
-                $project: {
-                  _id: 0,
-                  question: "$question",
-                  averageScore: "$avg_score"
-                }
-              },
-              {
-                $sort: { "question._id": 1 }
-              }
-            ],
-            as: "answers"
-          }
-        }
-      ])
-      .toArray((err, result) => {
-        if (err) return console.log(err);
-        res.send(result);
-      });
-  });
+  });  
 
   app.get("/api/subject_average_scores", (req, res) => {
     db.collection("answers")

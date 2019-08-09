@@ -1,9 +1,9 @@
 import React, { Component, Fragment } from "react";
 import { withStyles, createStyles, WithStyles } from "@material-ui/core/styles";
-import { Typography } from "@material-ui/core";
+import { Typography, Tooltip } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
 import Fab from "@material-ui/core/Fab";
-import DeleteIcon from "@material-ui/icons/Delete";
+import { Delete as DeleteIcon, Link as LinkIcon } from "@material-ui/icons";
 
 import { connect } from "react-redux";
 import { removeParticipantFromSet } from "../../State/actions";
@@ -18,8 +18,33 @@ const styles = (theme: any) =>
       display: "block",
       marginLeft: 20,
       marginTop: 20
+    },
+    button: {
+      margin: theme.spacing.unit
     }
   });
+
+const copyLink = (code: string) => {
+  const doc: any = document;
+
+  const el = doc.createElement("textarea");
+  el.value = `${new URL(window.location.href).origin}/rate?${code}`;
+  el.setAttribute("readonly", "");
+  el.style.position = "absolute";
+  el.style.left = "-9999px";
+  doc.body.appendChild(el);
+  const selected =
+    doc.getSelection().rangeCount > 0
+      ? doc.getSelection().getRangeAt(0)
+      : false;
+  el.select();
+  doc.execCommand("copy");
+  doc.body.removeChild(el);
+  if (selected) {
+    doc.getSelection().removeAllRanges();
+    doc.getSelection().addRange(selected);
+  }
+};
 
 interface Props extends WithStyles<typeof styles> {
   participants?: any;
@@ -41,8 +66,18 @@ class SetPane extends Component<Props, State> {
     this.removeParticipantFromSet = props.removeParticipantFromSet;
   }
 
-  removeFromSet(set_participant_id: string) {
-    this.props.removeParticipantFromSet(set_participant_id);
+  componentDidUpdate = () => {};
+
+  removeFromSet(
+    set_participant_id: string,
+    set_id: string,
+    participant_id: string
+  ) {
+    this.props.removeParticipantFromSet(
+      set_participant_id,
+      set_id,
+      participant_id
+    );
   }
 
   render() {
@@ -58,7 +93,7 @@ class SetPane extends Component<Props, State> {
       .map((set_participant: any) => (
         <Fragment key={set_participant._id}>
           <Grid item xs={1} />
-          <Grid item xs={9}>
+          <Grid item xs={8}>
             <Typography className={classes.typography}>
               {[
                 participants.find(
@@ -75,14 +110,32 @@ class SetPane extends Component<Props, State> {
           <Grid item xs={2}>
             <Fab
               size="small"
-              color="primary"
+              color="secondary"
               aria-label="Add"
               className={classes.fab}
-              onClick={() => this.removeFromSet(set_participant._id)}
+              onClick={() =>
+                this.removeFromSet(
+                  set_participant._id,
+                  set_participant.set_id,
+                  set_participant.participant_id
+                )
+              }
             >
               <DeleteIcon />
             </Fab>
+            <Tooltip title="Copy Link">
+              <Fab
+                size="small"
+                color="primary"
+                aria-label="Link"
+                className={classes.button}
+                onClick={() => copyLink(set_participant.code)}
+              >
+                <LinkIcon />
+              </Fab>
+            </Tooltip>
           </Grid>
+          <Grid item xs={1} />
         </Fragment>
       ));
   }

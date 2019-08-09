@@ -39,14 +39,14 @@ const borderColors = [
 ];
 
 interface Props {
-  wines: any;
-  metrics: any;
+  sets_subjects: any;
+  questions: any;
 }
 
 function BarChart(props: Props) {
   console.log(`Initialising Bar Chart`);
-  let labels = props.metrics.map((metric: any) => metric.name);
-  let wines = props.wines;
+  let labels = props.questions.map((question: any) => question.name);
+  let sets_subjects = props.sets_subjects;
 
   let options = {
     scales: {
@@ -66,19 +66,21 @@ function BarChart(props: Props) {
 
   let chartData: any = [];
 
-  wines.forEach((wine:any) => {
-    let wineData = wine.scores.map((score:any) => score.averageScore);
+  sets_subjects.forEach((set_subject: any) => {
+    let subjectData = set_subject.answers.map(
+      (answer: any) => answer.averageAnswer
+    );
     chartData.push({
-      label: wine.name,
-      data: wineData,
+      label: set_subject.subject.name,
+      data: subjectData,
       fill: true,
-      backgroundColor: backgroundColors[wines.indexOf(wine)],
-      borderColor: borderColors[wines.indexOf(wine)],
+      backgroundColor: backgroundColors[sets_subjects.indexOf(set_subject)],
+      borderColor: borderColors[sets_subjects.indexOf(set_subject)],
       borderWidth: 1,
-      pointBackgroundColor: borderColors[wines.indexOf(wine)],
+      pointBackgroundColor: borderColors[sets_subjects.indexOf(set_subject)],
       pointBorderColor: "#fff",
       pointHoverBackgroundColor: "#fff",
-      pointHoverBorderColor: borderColors[wines.indexOf(wine)]
+      pointHoverBorderColor: borderColors[sets_subjects.indexOf(set_subject)]
     });
   });
 

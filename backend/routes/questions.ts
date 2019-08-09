@@ -2,7 +2,7 @@ import { ObjectID, Db } from "mongodb";
 import { Application } from "express";
 import {
   addToCollection,
-  getFromCollection,
+  findInCollection,
   removeFromCollection
 } from "../helperFunctions";
 
@@ -19,8 +19,8 @@ export default (app: Application, db: Db) => {
 
   app.post("/api/questions", async (req, res) => {
     let question: any = await addToCollection(db, "questions", req.body);
-    let participants: any = await getFromCollection(db, "participants");
-    let wines: any = await getFromCollection(db, "wines");
+    let participants: any = await findInCollection(db, "participants");
+    let wines: any = await findInCollection(db, "wines");
     participants.forEach((participant: any) => {
       wines.forEach((wine: any) => {
         db.collection("answers").insertOne({
