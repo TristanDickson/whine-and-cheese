@@ -54,7 +54,7 @@ function BarChart(props: Props) {
         {
           ticks: {
             beginAtZero: true,
-            suggestedMax: 10
+            suggestedMax: 5
           }
         }
       ]

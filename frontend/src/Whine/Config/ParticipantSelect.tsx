@@ -50,12 +50,15 @@ class ParticipantSelect extends Component<Props, State> {
       options: this.validParticipants(),
       selectedOption: 0
     };
+    console.log(`Valid Pariticipants: ${this.state.options}`);
   }
 
   validParticipants() {
     let set_id = this.props.set_id;
     let participants = this.props.participants.participants;
     let sets_participants = this.props.sets_participants.sets_participants;
+    console.log(`Participants: ${participants}`);
+    console.log(`Sets Participants: ${sets_participants}`);
 
     return participants.filter(
       (participant: any) =>
