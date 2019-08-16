@@ -7,7 +7,7 @@ import * as mongo from "mongodb";
 
 import * as path from "path";
 import * as jwt from "jsonwebtoken";
-import User from "./models/User.js";
+import User from "./models/User";
 import withAuth from "./middleware";
 
 import addParticipantsRoutes from "./routes/participants";
@@ -54,7 +54,7 @@ let db: mongo.Db;
   const mongo_uri = `mongodb://${database_url}:27017/react-auth`;
   connect(
     mongo_uri,
-    function(err) {
+    function (err) {
       if (err) {
         console.log(err);
         throw err;
@@ -64,17 +64,17 @@ let db: mongo.Db;
     }
   );
 
-  app.get("/api/checkToken", withAuth, function(req, res) {
+  app.get("/api/checkToken", withAuth, function (req, res) {
     res.sendStatus(200);
   });
 
-  app.post("/api/register", function(req, res) {
+  app.post("/api/register", function (req, res) {
+    console.log(req.body);
     const { email, password } = req.body;
     const user = new User({ email: email, password: password });
-    console.log(req.body);
-    user.save(function(err) {
+    user.save((err) => {
       if (err) {
-        console.log(err);
+        console.log(`ERROR: ${err}`);
         res.status(500).send("Error registering new user please try again.");
       } else {
         res.status(200).send("Welcome to the club!");
@@ -82,9 +82,9 @@ let db: mongo.Db;
     });
   });
 
-  app.post("/api/authenticate", function(req, res) {
+  app.post("/api/authenticate", function (req, res) {
     const { email, password } = req.body;
-    User.findOne({ email }, function(err, user) {
+    User.findOne({ email }, function (err, user) {
       if (err) {
         console.error(err);
         res.status(500).json({
@@ -96,7 +96,7 @@ let db: mongo.Db;
           error: "Incorrect email or password"
         });
       } else {
-        user.isCorrectPassword(password, function(err: Error, same: any) {
+        user.isCorrectPassword(password, function (err: Error, same: any) {
           if (err) {
             console.error(err);
             res.status(500).json({
@@ -123,7 +123,7 @@ let db: mongo.Db;
     });
   });
 
-  app.post("/api/logout", function(req, res) {
+  app.post("/api/logout", function (req, res) {
     console.log(`User ${req.body.email} successfully logged out.`);
     res.clearCookie("token").sendStatus(200);
   });
@@ -137,7 +137,7 @@ let db: mongo.Db;
   addSetsQuestionsRoutes(app, db);
   addAnswersRoutes(app, db);
 
-  app.get("/*", function(req, res) {
+  app.get("/*", function (req, res) {
     res.sendFile(path.join(__dirname, "build", ""));
   });
 
